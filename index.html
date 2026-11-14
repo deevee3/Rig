@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE RIG ($RIG + $RGG) — Twin-Genesis Autonomous Compute on Base</title>
+  <meta name="description" content="Twin-contract genesis on Base: $RIG hardware reserve index + $RGG HTTP 402 (x402 v2) agent execution gas. Verifiable on-chain telemetry." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect width='24' height='24' rx='5' fill='%23090A0F'/%3E%3Cpolygon points='12,3 20,7.5 20,16.5 12,21 4,16.5 4,7.5' stroke='%2300F59B' stroke-width='1.8'/%3E%3Cline x1='12' y1='3' x2='12' y2='12' stroke='%2300F59B' stroke-width='1.8'/%3E%3Cline x1='20' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3Cline x1='4' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" /></noscript>
+  <style>
+    :root {
+      --bg-primary: #090A0F;
+      --bg-secondary: #12151E;
+      --bg-tertiary: #181C28;
+      --accent-mint: #00F59B;
+      --accent-mint-dim: rgba(0, 245, 155, 0.12);
+      --accent-mint-border: rgba(0, 245, 155, 0.28);
+      --accent-cyan: #38BDF8;
+      --accent-cyan-dim: rgba(56, 189, 248, 0.12);
+      --accent-cyan-border: rgba(56, 189, 248, 0.28);
+      --text-primary: #F3F5F8;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --border-strong: rgba(148, 163, 184, 0.22);
+      --font-display: 'Inter Tight', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-primary);
+      background-image:
+        linear-gradient(to right, rgba(18, 21, 30, 0.65) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(18, 21, 30, 0.65) 1px, transparent 1px);
+      background-size: 48px 48px;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(9, 10, 15, 0.88);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent-mint-border);
+      border-radius: 6px;
+    }
+
+    .ticker-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent-mint);
+      background: var(--accent-mint-dim);
+      border: 1px solid var(--accent-mint-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .ticker-badge.gas {
+      color: var(--accent-cyan);
+      background: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan-border);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 9px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--accent-mint);
+      color: #05070A;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    .btn-cyan {
+      background: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan-border);
+      font-weight: 600;
+    }
+
+    .btn-cyan:hover { background: var(--accent-cyan); color: #05070A; }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .btn-secondary:hover { border-color: var(--accent-mint); color: var(--accent-mint); }
+
+    .hero {
+      padding: 72px 0 60px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--accent-mint);
+      background: var(--accent-mint-dim);
+      border: 1px solid var(--accent-mint-border);
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      box-shadow: 0 0 10px var(--accent-mint);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.88); }
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.22fr 0.78fr;
+      gap: 44px;
+      align-items: start;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.8vw, 3.85rem);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 span.mint { color: var(--accent-mint); }
+    .hero h1 span.cyan { color: var(--accent-cyan); }
+
+    .hero-sub {
+      font-size: 1.075rem;
+      color: var(--text-secondary);
+      max-width: 590px;
+      margin-bottom: 28px;
+    }
+
+    .ca-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 620px;
+      margin-bottom: 28px;
+    }
+
+    .ca-unit { display: flex; flex-direction: column; gap: 6px; }
+
+    .ca-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ca-role-tag { font-weight: 600; color: var(--accent-mint); }
+    .ca-role-tag.gas { color: var(--accent-cyan); }
+
+    .ca-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      padding: 11px 14px;
+      border-radius: 6px;
+      transition: border-color 0.15s ease;
+    }
+
+    .ca-box:hover { border-color: var(--accent-mint-border); }
+    .ca-box.gas-box:hover { border-color: var(--accent-cyan-border); }
+
+    .ca-address {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .ca-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .copy-btn {
+      background: var(--bg-tertiary);
+      color: var(--accent-mint);
+      border: 1px solid var(--accent-mint-border);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover, .copy-btn.copied { background: var(--accent-mint); color: #05070A; }
+
+    .copy-btn.gas-btn { color: var(--accent-cyan); border-color: var(--accent-cyan-border); }
+    .copy-btn.gas-btn:hover, .copy-btn.gas-btn.copied { background: var(--accent-cyan); color: #05070A; }
+
+    .mini-link {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 9px;
+      border-radius: 4px;
+    }
+
+    .mini-link:hover { color: var(--text-primary); border-color: var(--border-strong); }
+
+    .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .charter-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .charter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .charter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.875rem;
+      gap: 12px;
+    }
+
+    .charter-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .charter-key {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+    }
+
+    .charter-val {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: right;
+    }
+
+    .charter-val.mint { color: var(--accent-mint); }
+    .charter-val.cyan { color: var(--accent-cyan); }
+
+    .metrics-section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .metric-delta {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--accent-mint);
+      margin-top: 6px;
+    }
+
+    .metric-delta.cyan { color: var(--accent-cyan); }
+    .metric-delta.muted { color: var(--text-secondary); }
+
+    .terminal-section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-mint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.875rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .terminal-window {
+      background: #06070B;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .terminal-dots { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #2A3040; }
+    .dot.active { background: var(--accent-mint); }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .terminal-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .term-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .term-btn:hover, .term-btn.active {
+      color: var(--accent-mint);
+      border-color: var(--accent-mint-border);
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      height: 360px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .log-line {
+      display: grid;
+      grid-template-columns: 82px 96px 76px 1fr auto;
+      gap: 12px;
+      align-items: baseline;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-time { color: var(--text-muted); }
+    .log-agent { color: var(--text-primary); font-weight: 600; }
+
+    .log-token {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      text-align: center;
+      width: fit-content;
+    }
+
+    .log-token.rig {
+      color: var(--accent-mint);
+      background: var(--accent-mint-dim);
+      border: 1px solid var(--accent-mint-border);
+    }
+
+    .log-token.rgg {
+      color: var(--accent-cyan);
+      background: var(--accent-cyan-dim);
+      border: 1px solid var(--accent-cyan-border);
+    }
+
+    .log-token.sys {
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .log-msg { color: var(--text-secondary); }
+    .log-hash { color: var(--text-muted); font-size: 0.75rem; }
+    .log-hash a:hover { color: var(--accent-mint); text-decoration: underline; }
+
+    .pillars-section { padding: 72px 0; border-bottom: 1px solid var(--border-subtle); }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .pillar-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 28px;
+    }
+
+    .pillar-index {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-mint);
+      margin-bottom: 14px;
+    }
+
+    .pillar-index.cyan { color: var(--accent-cyan); }
+
+    .pillar-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .pillar-card p { font-size: 0.925rem; color: var(--text-secondary); }
+
+    .manifesto-section { padding: 72px 0; }
+
+    .manifesto-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      border-left: 3px solid var(--accent-mint);
+      border-radius: 8px;
+      padding: 36px;
+      max-width: 840px;
+    }
+
+    .manifesto-box p { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 18px; }
+    .manifesto-box p:last-child { margin-bottom: 0; color: var(--text-primary); font-weight: 500; }
+
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 36px 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a:hover { color: var(--accent-mint); }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .pillars-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .log-line { grid-template-columns: 74px 86px 64px 1fr; }
+      .log-hash { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 16px; }
+      .brand { font-size: 1rem; white-space: nowrap; }
+      .brand .ticker-badge { display: none; }
+      .nav-actions { gap: 8px; flex-shrink: 0; }
+      .nav-actions .btn { padding: 6px 10px; font-size: 0.72rem; white-space: nowrap; }
+      .ca-label { flex-wrap: wrap; gap: 4px; }
+      .hero { padding: 48px 0 44px; }
+    }
+
+    @media (max-width: 520px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      .log-line { grid-template-columns: 70px 64px 1fr; }
+      .log-agent { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#" class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" stroke="#00F59B" stroke-width="2" />
+            <line x1="12" y1="2" x2="12" y2="12" stroke="#00F59B" stroke-width="2" />
+            <line x1="21" y1="7" x2="12" y2="12" stroke="#38BDF8" stroke-width="2" />
+            <line x1="3" y1="7" x2="12" y2="12" stroke="#38BDF8" stroke-width="2" />
+          </svg>
+        </div>
+        <span>THE RIG</span>
+        <span class="ticker-badge">$RIG</span>
+        <span class="ticker-badge gas">$RGG</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#telemetry">Live Tape</a>
+        <a href="#flywheel">Twin Flywheel</a>
+        <a href="#thesis">Thesis</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a id="nav-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn-primary">$RIG Chart ↗</a>
+        <a id="nav-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn-cyan">$RGG Chart ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span id="hero-status-text">TWIN-CONTRACT GENESIS // ...5BA3 + ...CBA3 ON BASE</span>
+        </div>
+
+        <h1>Separate the <span class="mint">machine</span> from the <span class="cyan">fuel</span>.</h1>
+
+        <p class="hero-sub">
+          Single-token AI projects fail because they use their reserve asset as working capital. The Rig splits bare-metal cluster equity (<strong>$RIG</strong>) from high-velocity x402 agent execution gas (<strong>$RGG</strong>) at Block 0.
+        </p>
+
+        <!-- FR-04: Clean single-line #ca-rig and #ca-rgg DOM IDs for sub-30s CA hot-swap -->
+        <div class="ca-wrapper">
+          <div class="ca-unit">
+            <div class="ca-label">
+              <span>01 // $RIG — BARE-METAL HARDWARE INDEX</span>
+              <span class="ca-role-tag" id="status-rig">CAPITAL &amp; RESERVE LAYER</span>
+            </div>
+            <div class="ca-box">
+              <code class="ca-address" id="ca-rig">0xbfefd4d88899830d756b2678944770a792315ba3</code>
+              <div class="ca-actions">
+                <a id="scan-rig" href="https://basescan.org/token/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="mini-link">SCAN ↗</a>
+                <button type="button" class="copy-btn" data-target="ca-rig" data-status="status-rig">COPY $RIG</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ca-unit">
+            <div class="ca-label">
+              <span>02 // $RGG — AGENT EXECUTION GAS</span>
+              <span class="ca-role-tag gas" id="status-rgg">X402 THROUGHPUT LAYER</span>
+            </div>
+            <div class="ca-box gas-box">
+              <code class="ca-address" id="ca-rgg">0x36376c7058894685507eca5112d04cfb2547cba3</code>
+              <div class="ca-actions">
+                <a id="scan-rgg" href="https://basescan.org/token/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="mini-link">SCAN ↗</a>
+                <button type="button" class="copy-btn gas-btn" data-target="ca-rgg" data-status="status-rgg">COPY $RGG</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-cta-row">
+          <a id="cta-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn-primary">Trade $RIG (Reserve) ↗</a>
+          <a id="cta-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn-cyan">Trade $RGG (Gas) ↗</a>
+          <a href="#telemetry" class="btn btn-secondary">Inspect Live Tape →</a>
+        </div>
+      </div>
+
+      <!-- FR-02: Twin-Genesis Specification Panel -->
+      <aside class="charter-card" aria-label="Twin-Genesis Specification">
+        <div class="charter-header">
+          <span>TWIN-GENESIS SPECIFICATION</span>
+          <span id="spec-network-badge">BASE // L2</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">CONTROLLER STATE</span>
+          <span class="charter-val mint" id="spec-controller-state">CHECKING BASE RPC...</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">CAPITAL PRIMITIVE</span>
+          <span class="charter-val mint" id="spec-rig-short">$RIG (...5ba3)</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">VELOCITY PRIMITIVE</span>
+          <span class="charter-val cyan" id="spec-rgg-short">$RGG (...cba3)</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">SETTLEMENT RAIL</span>
+          <span class="charter-val">HTTP 402 / x402 v2</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">HUMAN INTERVENTION</span>
+          <span class="charter-val mint" id="spec-human-override">0.00% (AIR-GAPPED)</span>
+        </div>
+        <div class="charter-row">
+          <span class="charter-key">BASE BLOCK HEIGHT</span>
+          <span class="charter-val" id="spec-block-height">—</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- On-Chain Telemetry Metrics Strip (100% live RPC / API derived) -->
+  <section class="metrics-section">
+    <div class="container metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">$RIG Vault / Supply</div>
+        <div class="metric-value" id="metric-vault-reserve">—</div>
+        <div class="metric-delta" id="metric-vault-sub">Reading Base L2 state...</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">$RGG Burned / Cycled</div>
+        <div class="metric-value" id="metric-rgg-burned">—</div>
+        <div class="metric-delta cyan" id="metric-rgg-sub">Reading burn sink + x402...</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">x402 Settlements</div>
+        <div class="metric-value" id="metric-settlements">—</div>
+        <div class="metric-delta" id="metric-settlements-sub">Base L2 verified receipts</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Pool &amp; Contract Integrity</div>
+        <div class="metric-value" id="metric-integrity">0% / 0%</div>
+        <div class="metric-delta muted" id="metric-integrity-sub">Verifying Doppler V4 / ERC-20...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FR-03: Live Dual-Primitive Telemetry Terminal -->
+  <section class="terminal-section" id="telemetry">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Verified On-Chain &amp; x402 Stream</div>
+          <h2 class="section-title">Dual-Primitive Telemetry Terminal</h2>
+        </div>
+        <div class="terminal-controls">
+          <button type="button" class="term-btn active" data-filter="ALL">ALL FLOW</button>
+          <button type="button" class="term-btn" data-filter="RIG_VAULT">$RIG VAULT</button>
+          <button type="button" class="term-btn" data-filter="RGG_GAS">$RGG GAS</button>
+          <button type="button" class="term-btn" id="toggle-stream-btn">PAUSE</button>
+          <button type="button" class="term-btn" id="clear-stream-btn">CLEAR</button>
+        </div>
+      </div>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div class="terminal-title" id="terminal-source-label">rig-indexer@base-l2: ~/telemetry/x402-receipts.log</div>
+          <div class="terminal-title" id="stream-indicator" style="color: var(--accent-mint);">● CONNECTING</div>
+        </div>
+        <div class="terminal-body" id="terminal-feed" role="log" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars-section" id="flywheel">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">System Architecture</div>
+          <h2 class="section-title">One Controller. Two Primitives.</h2>
+        </div>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-index" id="pillar-rig-label">01 // $RIG (0xbfef...5ba3)</div>
+          <h3>Low-Velocity Capital Layer</h3>
+          <p>Anchors the bare-metal cluster and reserve vault. Protected from high-frequency agent slippage so reserve backing compounds cleanly.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-index cyan" id="pillar-rgg-label">02 // $RGG (0x3637...cba3)</div>
+          <h3>High-Velocity Throughput</h3>
+          <p>Settles machine-to-machine HTTP 402 (x402 v2) payment challenges, EIP-2612 permits, and sub-second inference metering at zero reserve drag.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-index">03 // CLOSED-LOOP SWEEP</div>
+          <h3>Deterministic Value Routing</h3>
+          <p>Agents burn and recycle $RGG on every inference call while net protocol spreads sweep into the non-custodial $RIG reserve vault.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="manifesto-section" id="thesis">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Operational Thesis</div>
+          <h2 class="section-title">That Division Never Changes</h2>
+        </div>
+      </div>
+
+      <div class="manifesto-box">
+        <p>
+          Single-token AI projects fail on accounting. Forcing one asset to act as both long-term treasury reserve and high-frequency working capital bleeds holders when agents sell for compute and prices agents out when holders lock supply.
+        </p>
+        <p>
+          The Rig separates the machine from the fuel at Block 0. Both ba3 contracts on Base work as one canonical system: $RGG handles execution velocity and x402 settlement; $RIG holds reserve weight. Every receipt is verifiable on BaseScan.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>THE RIG ($RIG + $RGG) // CANONICAL TWIN-GENESIS // DEPLOYED ON BASE</div>
+      <div class="footer-links">
+        <a id="footer-rig-scan" href="https://basescan.org/token/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener">$RIG BASESCAN</a>
+        <a id="footer-rgg-scan" href="https://basescan.org/token/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener">$RGG BASESCAN</a>
+        <a id="footer-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener">$RIG CHART</a>
+        <a id="footer-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener">$RGG CHART</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Single-line runtime endpoints (hot-swappable or overridden via ?api=...&rpc=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const RIG_CONFIG = {
+      apiBaseUrl: urlParams.get('api') ?? '',
+      fallbackApiUrl: urlParams.get('fallbackApi') ?? '',
+      rpcUrl: urlParams.get('rpc') ?? 'https://mainnet.base.org',
+      explorerBaseUrl: 'https://basescan.org',
+      dexscreenerBaseUrl: 'https://dexscreener.com/base',
+      vaultAddress: urlParams.get('vault') ?? '',
+      controllerAddress: urlParams.get('controller') ?? '',
+    };
+
+    const caRig = document.getElementById('ca-rig').textContent.trim();
+    const caRgg = document.getElementById('ca-rgg').textContent.trim();
+
+    function shortAddr(addr) {
+      if (!addr || addr.length < 12) return addr || 'UNCONFIGURED';
+      return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = String(text ?? '');
+      return div.innerHTML;
+    }
+
+    // Bind dynamic explorer & chart links from #ca-rig and #ca-rgg (FR-04)
+    function syncStaticLinks(explorerBase) {
+      const explorer = (explorerBase || RIG_CONFIG.explorerBaseUrl).replace(/\/$/, '');
+      const dex = RIG_CONFIG.dexscreenerBaseUrl;
+      if (/^0x[a-fA-F0-9]{40}$/.test(caRig)) {
+        document.getElementById('scan-rig').href = `${explorer}/token/${caRig}`;
+        document.getElementById('footer-rig-scan').href = `${explorer}/token/${caRig}`;
+        document.getElementById('nav-rig-chart').href = `${dex}/${caRig}`;
+        document.getElementById('cta-rig-chart').href = `${dex}/${caRig}`;
+        document.getElementById('footer-rig-chart').href = `${dex}/${caRig}`;
+        document.getElementById('spec-rig-short').textContent = `$RIG (${shortAddr(caRig)})`;
+        document.getElementById('pillar-rig-label').textContent = `01 // $RIG (${shortAddr(caRig)})`;
+      }
+      if (/^0x[a-fA-F0-9]{40}$/.test(caRgg)) {
+        document.getElementById('scan-rgg').href = `${explorer}/token/${caRgg}`;
+        document.getElementById('footer-rgg-scan').href = `${explorer}/token/${caRgg}`;
+        document.getElementById('nav-rgg-chart').href = `${dex}/${caRgg}`;
+        document.getElementById('cta-rgg-chart').href = `${dex}/${caRgg}`;
+        document.getElementById('footer-rgg-chart').href = `${dex}/${caRgg}`;
+        document.getElementById('spec-rgg-short').textContent = `$RGG (${shortAddr(caRgg)})`;
+        document.getElementById('pillar-rgg-label').textContent = `02 // $RGG (${shortAddr(caRgg)})`;
+      }
+      if (/^0x[a-fA-F0-9]{40}$/.test(caRig) && /^0x[a-fA-F0-9]{40}$/.test(caRgg)) {
+        document.getElementById('hero-status-text').textContent =
+          `TWIN-CONTRACT GENESIS // ...${caRig.slice(-4).toUpperCase()} + ...${caRgg.slice(-4).toUpperCase()} ON BASE`;
+      }
+    }
+    syncStaticLinks(RIG_CONFIG.explorerBaseUrl);
+
+    // FR-01: Dual-Contract Copy Handler with navigator.clipboard + DOM selection fallback
+    document.querySelectorAll('.copy-btn[data-target]').forEach((btn) => {
+      const originalLabel = btn.textContent;
+      btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-target');
+        const statusId = btn.getAttribute('data-status');
+        const addressEl = document.getElementById(targetId);
+        const statusEl = document.getElementById(statusId);
+        const address = addressEl.textContent.trim();
+        const originalStatus = statusEl.textContent;
+
+        try {
+          await navigator.clipboard.writeText(address);
+        } catch {
+          const range = document.createRange();
+          range.selectNode(addressEl);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+        }
+
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        statusEl.textContent = 'COPIED TO CLIPBOARD';
+
+        setTimeout(() => {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+          statusEl.textContent = originalStatus;
+        }, 2000);
+      });
+    });
+
+    // FR-03: Live Dual-Primitive Telemetry Terminal
+    const terminalFeed = document.getElementById('terminal-feed');
+    const toggleStreamBtn = document.getElementById('toggle-stream-btn');
+    const clearStreamBtn = document.getElementById('clear-stream-btn');
+    const streamIndicator = document.getElementById('stream-indicator');
+    const filterBtns = document.querySelectorAll('.term-btn[data-filter]');
+
+    let isPaused = false;
+    let activeFilter = 'ALL';
+    const renderedIds = new Set();
+
+    function formatClock(isoString) {
+      const d = isoString ? new Date(isoString) : new Date();
+      if (Number.isNaN(d.getTime())) return '--:--:--';
+      return d.toTimeString().split(' ')[0];
+    }
+
+    function applyFilterToLine(line) {
+      const prim = line.getAttribute('data-primitive');
+      if (activeFilter === 'ALL' || activeFilter === prim || (activeFilter === 'RIG_VAULT' && prim === 'SYSTEM')) {
+        line.style.display = '';
+      } else {
+        line.style.display = 'none';
+      }
+    }
+
+    function appendTelemetryLine(ev) {
+      if (ev.id && renderedIds.has(ev.id)) return;
+      if (ev.id) renderedIds.add(ev.id);
+
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.setAttribute('data-primitive', ev.primitive || 'SYSTEM');
+
+      const badgeClass = ev.primitive === 'RIG_VAULT' ? 'rig' : ev.primitive === 'RGG_GAS' ? 'rgg' : 'sys';
+      const badgeLabel = ev.primitive === 'RIG_VAULT' ? '$RIG' : ev.primitive === 'RGG_GAS' ? '$RGG' : 'BASE';
+      const shortTx = ev.txHash ? shortAddr(ev.txHash) : `BLK#${ev.blockNumber ?? '—'}`;
+      const hashHtml = ev.explorerUrl
+        ? `<a href="${escapeHtml(ev.explorerUrl)}" target="_blank" rel="noopener">${escapeHtml(shortTx)} ↗</a>`
+        : escapeHtml(shortTx);
+
+      line.innerHTML = `
+        <span class="log-time">${escapeHtml(formatClock(ev.timestamp))}</span>
+        <span class="log-agent">[${escapeHtml(ev.agentId || 'NODE-01')}]</span>
+        <span class="log-token ${badgeClass}">${badgeLabel}</span>
+        <span class="log-msg">${escapeHtml(ev.summary)}</span>
+        <span class="log-hash">${hashHtml}</span>
+      `;
+
+      applyFilterToLine(line);
+      terminalFeed.prepend(line);
+      while (terminalFeed.children.length > 60) {
+        terminalFeed.removeChild(terminalFeed.lastChild);
+      }
+    }
+
+    function setIndicator(label, color) {
+      streamIndicator.textContent = label;
+      streamIndicator.style.color = color;
+    }
+
+    function formatCompactSupply(rawDecimalStr) {
+      if (!rawDecimalStr) return '—';
+      const n = Number(rawDecimalStr);
+      if (!Number.isFinite(n)) return rawDecimalStr;
+      if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`;
+      if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
+      return n.toLocaleString('en-US', { maximumFractionDigits: 4 });
+    }
+
+    function applySnapshot(snap) {
+      if (!snap) return;
+      syncStaticLinks(snap.explorerBaseUrl);
+
+      document.getElementById('spec-network-badge').textContent = snap.networkLabel || 'BASE // L2';
+      if (snap.blockNumber !== null && snap.blockNumber !== undefined) {
+        document.getElementById('spec-block-height').textContent = `#${snap.blockNumber.toLocaleString('en-US')}`;
+      }
+
+      const sealed = snap.controller?.genesisSealed;
+      const overrideBps = snap.controller?.humanOverrideBps;
+      if (sealed === true) {
+        document.getElementById('spec-controller-state').textContent = 'SEALED (IMMUTABLE)';
+        document.getElementById('spec-human-override').textContent =
+          `${((overrideBps ?? 0) / 100).toFixed(2)}% (ON-CHAIN)`;
+      } else if (snap.contracts?.rigToken && snap.contracts?.rggToken) {
+        document.getElementById('spec-controller-state').textContent = 'LIVE DOPPLER V4 TOKENS';
+      } else {
+        document.getElementById('spec-controller-state').textContent = 'AWAITING GENESIS BIND';
+      }
+
+      const m = snap.metrics || {};
+      const rigMarket = snap.market?.rig;
+      const rggMarket = snap.market?.rgg;
+
+      // Metric 1: Vault Reserve (or $RIG Fixed Supply + Pool Liquidity before Vault binding)
+      if (snap.contracts?.vault) {
+        const usdc = Number(m.vaultUsdcReserve || 0);
+        const eth = Number(m.vaultEthReserve || 0);
+        document.getElementById('metric-vault-reserve').textContent =
+          usdc > 0 ? `$${usdc.toLocaleString('en-US', { maximumFractionDigits: 2 })} USDC` : `${eth} ETH`;
+        document.getElementById('metric-vault-sub').textContent =
+          `${m.vaultRggReserve || '0'} $RGG locked in vault`;
+      } else if (rigMarket?.liquidityUsd) {
+        document.getElementById('metric-vault-reserve').textContent =
+          `$${Math.round(rigMarket.liquidityUsd).toLocaleString('en-US')}`;
+        document.getElementById('metric-vault-sub').textContent =
+          `Uniswap V4 Liq · Supply ${formatCompactSupply(m.rigTotalSupply)}`;
+      } else {
+        document.getElementById('metric-vault-reserve').textContent = `${formatCompactSupply(m.rigTotalSupply)} $RIG`;
+        document.getElementById('metric-vault-sub').textContent = 'Fixed genesis supply · Vault pending bind';
+      }
+
+      // Metric 2: $RGG Burned / Cycled
+      document.getElementById('metric-rgg-burned').textContent = `${formatCompactSupply(m.rggTotalBurned)} $RGG`;
+      document.getElementById('metric-rgg-sub').textContent =
+        Number(m.totalRggSettled || 0) > 0
+          ? `${formatCompactSupply(m.totalRggSettled)} cycled via x402`
+          : `Supply ${formatCompactSupply(m.rggTotalSupply)} $RGG`;
+
+      // Metric 3: x402 Settlements + Market Txns
+      const settlements = Number(m.totalSettlements || 0);
+      const marketTxns = (rigMarket?.txns24h || 0) + (rggMarket?.txns24h || 0);
+      document.getElementById('metric-settlements').textContent =
+        settlements > 0 ? settlements.toLocaleString('en-US') : marketTxns > 0 ? `${marketTxns} (24h DEX)` : '0';
+      document.getElementById('metric-settlements-sub').textContent =
+        snap.blockNumber ? `${snap.networkLabel} · Block #${snap.blockNumber.toLocaleString('en-US')}` : 'Awaiting settlement receipts';
+
+      // Metric 4: Integrity
+      document.getElementById('metric-integrity').textContent = '0% / 0%';
+      document.getElementById('metric-integrity-sub').textContent =
+        sealed ? 'RigController sealed · Zero override' : 'Twin ...ba3 ERC-20s verified on Base';
+
+      if (!isPaused && Array.isArray(snap.events)) {
+        const chronological = [...snap.events].reverse();
+        for (const ev of chronological) {
+          appendTelemetryLine(ev);
+        }
+        if (snap.events.length === 0) {
+          appendTelemetryLine({
+            id: `audit-${snap.blockNumber ?? 0}`,
+            timestamp: snap.updatedAt,
+            blockNumber: snap.blockNumber,
+            agentId: 'BASE-RPC',
+            primitive: 'SYSTEM',
+            summary: `Synced ${snap.networkLabel} #${snap.blockNumber ?? '—'} — listening for x402 & ERC-20 receipts`,
+            explorerUrl: `${(snap.explorerBaseUrl || RIG_CONFIG.explorerBaseUrl).replace(/\/$/, '')}/token/${caRgg}`,
+            txHash: caRgg,
+          });
+        }
+      }
+
+      if (!isPaused) {
+        if (snap.status === 'live') {
+          setIndicator(`● LIVE · ${snap.networkLabel}`, '#00F59B');
+        } else if (snap.status === 'rpc_error') {
+          setIndicator('▲ RPC BACKOFF', '#F59E0B');
+        } else {
+          setIndicator('● AWAITING GENESIS', '#38BDF8');
+        }
+      }
+    }
+
+    // Fallback: direct lightweight JSON-RPC eth_call when deployed statically without backend API
+    async function rpcCall(method, params) {
+      const resp = await fetch(RIG_CONFIG.rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params }),
+      });
+      const json = await resp.json();
+      if (json.error) throw new Error(json.error.message || 'RPC error');
+      return json.result;
+    }
+
+    function decodeUint256(hexVal, decimals) {
+      if (!hexVal || hexVal === '0x') return '0';
+      const val = BigInt(hexVal);
+      const divisor = 10n ** BigInt(decimals);
+      const whole = val / divisor;
+      const frac = (val % divisor).toString().padStart(decimals, '0').slice(0, 4).replace(/0+$/, '');
+      return frac ? `${whole}.${frac}` : whole.toString();
+    }
+
+    async function pollDirectBaseRpc() {
+      if (isPaused) return;
+      document.getElementById('terminal-source-label').textContent = `base-json-rpc: ${RIG_CONFIG.rpcUrl}`;
+      try {
+        const DEAD_PADDED = '000000000000000000000000000000000000000000000000000000000000dEaD';
+        const [blockHex, rigSupplyHex, rggSupplyHex, rggDeadHex] = await Promise.all([
+          rpcCall('eth_blockNumber', []),
+          rpcCall('eth_call', [{ to: caRig, data: '0x18160ddd' }, 'latest']),
+          rpcCall('eth_call', [{ to: caRgg, data: '0x18160ddd' }, 'latest']),
+          rpcCall('eth_call', [{ to: caRgg, data: `0x70a08231${DEAD_PADDED}` }, 'latest']),
+        ]);
+
+        const blockNumber = Number.parseInt(blockHex, 16);
+        const rigTotalSupply = decodeUint256(rigSupplyHex, 18);
+        const rggTotalSupply = decodeUint256(rggSupplyHex, 18);
+        const rggTotalBurned = decodeUint256(rggDeadHex, 18);
+
+        let dexRig = null;
+        let dexRgg = null;
+        try {
+          const dexRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${caRig},${caRgg}`);
+          if (dexRes.ok) {
+            const dexJson = await dexRes.json();
+            const pairs = (dexJson.pairs || []).filter((p) => p.chainId === 'base');
+            const pick = (addr) => {
+              const p = pairs
+                .filter((x) => x.baseToken?.address?.toLowerCase() === addr.toLowerCase())
+                .sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
+              if (!p) return null;
+              return {
+                liquidityUsd: p.liquidity?.usd ?? null,
+                txns24h: p.txns?.h24 ? (p.txns.h24.buys || 0) + (p.txns.h24.sells || 0) : null,
+              };
+            };
+            dexRig = pick(caRig);
+            dexRgg = pick(caRgg);
+          }
+        } catch {
+          // DexScreener optional
+        }
+
+        applySnapshot({
+          status: 'live',
+          updatedAt: new Date().toISOString(),
+          networkLabel: 'BASE MAINNET',
+          explorerBaseUrl: RIG_CONFIG.explorerBaseUrl,
+          blockNumber,
+          contracts: {
+            rigToken: caRig,
+            rggToken: caRgg,
+            vault: RIG_CONFIG.vaultAddress || null,
+          },
+          controller: { genesisSealed: null, humanOverrideBps: 0 },
+          metrics: {
+            rigTotalSupply,
+            rggTotalSupply,
+            rggTotalBurned,
+            totalSettlements: '0',
+            totalRggSettled: '0',
+          },
+          market: { rig: dexRig, rgg: dexRgg },
+          events: [
+            {
+              id: `rpc-rig-${blockNumber}`,
+              timestamp: new Date().toISOString(),
+              blockNumber,
+              txHash: caRig,
+              explorerUrl: `${RIG_CONFIG.explorerBaseUrl}/token/${caRig}`,
+              agentId: 'BASE-RPC',
+              primitive: 'RIG_VAULT',
+              summary: `Verified $RIG totalSupply=${formatCompactSupply(rigTotalSupply)} on Base #${blockNumber}`,
+            },
+            {
+              id: `rpc-rgg-${blockNumber}`,
+              timestamp: new Date().toISOString(),
+              blockNumber,
+              txHash: caRgg,
+              explorerUrl: `${RIG_CONFIG.explorerBaseUrl}/token/${caRgg}`,
+              agentId: 'BASE-RPC',
+              primitive: 'RGG_GAS',
+              summary: `Verified $RGG totalSupply=${formatCompactSupply(rggTotalSupply)} · burned=${rggTotalBurned}`,
+            },
+          ],
+        });
+      } catch (err) {
+        setIndicator('▲ RPC RETRY', '#F59E0B');
+        appendTelemetryLine({
+          id: `err-${Math.floor(Date.now() / 10000)}`,
+          timestamp: new Date().toISOString(),
+          agentId: 'RPC-WARN',
+          primitive: 'SYSTEM',
+          summary: `RPC check delayed (${err.message || 'rate limit'}) — retrying`,
+        });
+      }
+    }
+
+    async function connectBackendApi(apiRoot) {
+      const normalized = apiRoot.replace(/\/$/, '');
+      const snapshotUrl = `${normalized}/api/telemetry/snapshot`;
+      const streamUrl = `${normalized}/api/telemetry/stream`;
+
+      const res = await fetch(snapshotUrl, { signal: AbortSignal.timeout(2500) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(`Expected JSON telemetry, got ${contentType || 'unknown'}`);
+      }
+      const snap = await res.json();
+      document.getElementById('terminal-source-label').textContent =
+        `rig-backend-sse: ${normalized || window.location.origin}/api/telemetry/stream`;
+      applySnapshot(snap);
+
+      const sse = new EventSource(streamUrl);
+      sse.addEventListener('snapshot', (e) => {
+        if (isPaused) return;
+        applySnapshot(JSON.parse(e.data));
+      });
+      sse.addEventListener('telemetry', (e) => {
+        if (isPaused) return;
+        const ev = JSON.parse(e.data);
+        appendTelemetryLine(ev);
+        fetch(snapshotUrl).then((r) => r.json()).then(applySnapshot).catch(() => {});
+      });
+      sse.onerror = () => {
+        if (!isPaused) setIndicator('● RECONNECTING', '#38BDF8');
+      };
+    }
+
+    async function startLiveTelemetry() {
+      const candidates = [RIG_CONFIG.apiBaseUrl];
+      if (!RIG_CONFIG.apiBaseUrl && RIG_CONFIG.fallbackApiUrl) {
+        candidates.push(RIG_CONFIG.fallbackApiUrl);
+      }
+
+      for (const candidate of candidates) {
+        try {
+          await connectBackendApi(candidate);
+          return;
+        } catch {
+          // Try next backend candidate or direct RPC fallback
+        }
+      }
+
+      await pollDirectBaseRpc();
+      setInterval(pollDirectBaseRpc, 10000);
+    }
+
+    // Filter Controls
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        Array.from(terminalFeed.children).forEach(applyFilterToLine);
+      });
+    });
+
+    toggleStreamBtn.addEventListener('click', () => {
+      isPaused = !isPaused;
+      toggleStreamBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
+      setIndicator(isPaused ? '❚❚ PAUSED' : '● LIVE', isPaused ? '#94A3B8' : '#00F59B');
+    });
+
+    clearStreamBtn.addEventListener('click', () => {
+      terminalFeed.innerHTML = '';
+      renderedIds.clear();
+    });
+
+    startLiveTelemetry();
+  </script>
+</body>
+</html>

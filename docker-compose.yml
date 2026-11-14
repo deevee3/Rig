@@ -1,0 +1,27 @@
+services:
+  therig-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: therig-app
+    restart: unless-stopped
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8787"
+    ports:
+      - "${THERIG_BIND_IP:-127.0.0.1}:8787:8787"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8787/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

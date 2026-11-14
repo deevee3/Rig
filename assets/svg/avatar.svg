@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#181D2B" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="ambientMint" cx="25%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00F59B" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ambientCyan" cx="80%" cy="65%" r="55%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="twinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F59B"/>
+      <stop offset="50%" stop-color="#F3F5F8" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="vertGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F3F5F8"/>
+      <stop offset="100%" stop-color="#00F59B"/>
+    </linearGradient>
+    <filter id="softGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00F59B" flood-opacity="0.22"/>
+    </filter>
+    <clipPath id="canvasClip">
+      <rect width="1024" height="1024"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#canvasClip)">
+    <rect width="1024" height="1024" fill="#090A0F"/>
+    <rect width="1024" height="1024" fill="url(#grid)"/>
+    <rect width="1024" height="1024" fill="url(#ambientMint)"/>
+    <rect width="1024" height="1024" fill="url(#ambientCyan)"/>
+
+    <!-- Technical Calibration Frame -->
+    <circle cx="512" cy="512" r="390" fill="none" stroke="#1E2536" stroke-width="2" stroke-dasharray="10 14"/>
+    <circle cx="512" cy="512" r="340" fill="none" stroke="#151B28" stroke-width="1.5"/>
+
+    <!-- Corner Reticles -->
+    <path d="M 88 148 L 88 88 L 148 88" fill="none" stroke="#00F59B" stroke-opacity="0.45" stroke-width="3"/>
+    <path d="M 876 88 L 936 88 L 936 148" fill="none" stroke="#38BDF8" stroke-opacity="0.45" stroke-width="3"/>
+    <path d="M 88 876 L 88 936 L 148 936" fill="none" stroke="#38BDF8" stroke-opacity="0.45" stroke-width="3"/>
+    <path d="M 876 936 L 936 936 L 936 876" fill="none" stroke="#00F59B" stroke-opacity="0.45" stroke-width="3"/>
+
+    
+  <g filter="url(#softGlow)">
+    <!-- Outer Carbon Facets -->
+    <polygon points="512.00,203.00 758.82,345.50 512.00,488.00 265.18,345.50" fill="#141926" stroke="#F3F5F8" stroke-opacity="0.16" stroke-width="8.0" />
+    <polygon points="265.18,345.50 512.00,488.00 512.00,773.00 265.18,630.50" fill="#0F131D" stroke="#00F59B" stroke-opacity="0.55" stroke-width="11.4" />
+    <polygon points="512.00,488.00 758.82,345.50 758.82,630.50 512.00,773.00" fill="#111623" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="11.4" />
+
+    <!-- Outer Isometric Wireframe -->
+    <polygon points="512.00,203.00 758.82,345.50 758.82,630.50 512.00,773.00 265.18,630.50 265.18,345.50" fill="none" stroke="url(#twinGrad)" stroke-width="11.4" stroke-linejoin="round" />
+
+    <!-- Internal Twin-Bus Dividers -->
+    <line x1="512.00" y1="203.00" x2="512.00" y2="488.00" stroke="#F3F5F8" stroke-opacity="0.45" stroke-width="8.0" />
+    <line x1="265.18" y1="345.50" x2="512.00" y2="488.00" stroke="#00F59B" stroke-width="11.4" stroke-linecap="round" />
+    <line x1="758.82" y1="345.50" x2="512.00" y2="488.00" stroke="#38BDF8" stroke-width="11.4" stroke-linecap="round" />
+    <line x1="512.00" y1="488.00" x2="512.00" y2="773.00" stroke="url(#vertGrad)" stroke-width="11.4" stroke-linecap="round" />
+
+    <!-- Inner Twin Core Cube -->
+    <polygon points="512.00,339.80 640.34,413.90 512.00,488.00 383.66,413.90" fill="#F3F5F8" fill-opacity="0.08" stroke="#F3F5F8" stroke-opacity="0.7" stroke-width="8.0" />
+    <polygon points="383.66,413.90 512.00,488.00 512.00,636.20 383.66,562.10" fill="#00F59B" fill-opacity="0.22" stroke="#00F59B" stroke-width="8.0" />
+    <polygon points="512.00,488.00 640.34,413.90 640.34,562.10 512.00,636.20" fill="#38BDF8" fill-opacity="0.22" stroke="#38BDF8" stroke-width="8.0" />
+
+    <!-- Circuit Terminal Nodes -->
+    <circle cx="512.00" cy="488.00" r="17.04" fill="#F3F5F8" />
+    <circle cx="265.18" cy="345.50" r="14.82" fill="#00F59B" />
+    <circle cx="758.82" cy="345.50" r="14.82" fill="#38BDF8" />
+    <circle cx="512.00" cy="773.00" r="14.82" fill="#F3F5F8" />
+  </g>
+
+    <!-- Minimal Bottom Telemetry Stamp -->
+    <text x="512" y="886" text-anchor="middle" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="26" font-weight="600" letter-spacing="6" fill="#94A3B8">THE RIG // <tspan fill="#00F59B">$RIG</tspan> + <tspan fill="#38BDF8">$RGG</tspan></text>
+  </g>
+</svg>

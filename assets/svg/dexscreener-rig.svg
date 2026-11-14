@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#181D2B" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="ambientMint" cx="25%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00F59B" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ambientCyan" cx="80%" cy="65%" r="55%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="twinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F59B"/>
+      <stop offset="50%" stop-color="#F3F5F8" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="vertGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F3F5F8"/>
+      <stop offset="100%" stop-color="#00F59B"/>
+    </linearGradient>
+    <filter id="softGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00F59B" flood-opacity="0.22"/>
+    </filter>
+    <clipPath id="canvasClip">
+      <rect width="1500" height="500"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#canvasClip)">
+    <rect width="1500" height="500" fill="#090A0F"/>
+    <rect width="1500" height="500" fill="url(#grid)"/>
+    <rect width="1500" height="500" fill="url(#ambientMint)"/>
+    <rect width="1500" height="500" fill="url(#ambientCyan)"/>
+
+    <!-- Left Accent Spine -->
+    <rect x="0" y="0" width="10" height="500" fill="#00F59B"/>
+
+    <!-- Top Metadata Bar -->
+    <rect x="64" y="46" width="1372" height="44" rx="6" fill="#12151E" stroke="#00F59B" stroke-opacity="0.35" stroke-width="1.5"/>
+    <circle cx="92" cy="68" r="5" fill="#00F59B"/>
+    <text x="112" y="74" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="16" font-weight="700" letter-spacing="1.5" fill="#00F59B">THE RIG // BASE TWIN-GENESIS PRIMITIVE</text>
+    <text x="1410" y="74" text-anchor="end" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="15" fill="#94A3B8">0% / 0% TAX · UNISWAP V4 · TWIN EXECUTION GAS: $RGG (0x3637...cba3)</text>
+
+    <!-- Primary Stamp -->
+    <text x="64" y="196" font-family="Adwaita Sans, Noto Sans, Liberation Sans, sans-serif" font-size="60" font-weight="700" letter-spacing="-1.5" fill="#F3F5F8">01 // $RIG HARDWARE INDEX</text>
+    <text x="64" y="246" font-family="Adwaita Sans, Noto Sans, Liberation Sans, sans-serif" font-size="25" font-weight="500" fill="#00F59B">CAPITAL &amp; RESERVE LAYER · ANCHOR TREASURY VAULT</text>
+
+    <!-- Full Contract Verification Panel -->
+    <rect x="64" y="286" width="980" height="74" rx="8" fill="#12151E" stroke="#00F59B" stroke-opacity="0.6" stroke-width="1.5"/>
+    <text x="88" y="314" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="13" font-weight="700" letter-spacing="1.2" fill="#94A3B8">CANONICAL BASE CONTRACT ADDRESS</text>
+    <text x="88" y="344" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="22" font-weight="600" fill="#F3F5F8">0xbfefd4d88899830d756b2678944770a792315ba3</text>
+
+    <!-- Bottom Links / Twin Cross-Reference -->
+    <rect x="64" y="384" width="980" height="54" rx="6" fill="#0D1018" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="1.2"/>
+    <text x="88" y="417" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="16" font-weight="600" fill="#F3F5F8">
+      therig.co  ·  @therigco  ·  <tspan fill="#38BDF8">TWIN EXECUTION GAS: $RGG (0x3637...cba3)</tspan>
+    </text>
+
+    <!-- Right Isometric Cube Mark -->
+    
+  <g filter="url(#softGlow)">
+    <!-- Outer Carbon Facets -->
+    <polygon points="1275.00,120.00 1409.23,197.50 1275.00,275.00 1140.77,197.50" fill="#141926" stroke="#F3F5F8" stroke-opacity="0.16" stroke-width="4.3" />
+    <polygon points="1140.77,197.50 1275.00,275.00 1275.00,430.00 1140.77,352.50" fill="#0F131D" stroke="#00F59B" stroke-opacity="0.55" stroke-width="6.2" />
+    <polygon points="1275.00,275.00 1409.23,197.50 1409.23,352.50 1275.00,430.00" fill="#111623" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="6.2" />
+
+    <!-- Outer Isometric Wireframe -->
+    <polygon points="1275.00,120.00 1409.23,197.50 1409.23,352.50 1275.00,430.00 1140.77,352.50 1140.77,197.50" fill="none" stroke="url(#twinGrad)" stroke-width="6.2" stroke-linejoin="round" />
+
+    <!-- Internal Twin-Bus Dividers -->
+    <line x1="1275.00" y1="120.00" x2="1275.00" y2="275.00" stroke="#F3F5F8" stroke-opacity="0.45" stroke-width="4.3" />
+    <line x1="1140.77" y1="197.50" x2="1275.00" y2="275.00" stroke="#00F59B" stroke-width="6.2" stroke-linecap="round" />
+    <line x1="1409.23" y1="197.50" x2="1275.00" y2="275.00" stroke="#38BDF8" stroke-width="6.2" stroke-linecap="round" />
+    <line x1="1275.00" y1="275.00" x2="1275.00" y2="430.00" stroke="url(#vertGrad)" stroke-width="6.2" stroke-linecap="round" />
+
+    <!-- Inner Twin Core Cube -->
+    <polygon points="1275.00,194.40 1344.80,234.70 1275.00,275.00 1205.20,234.70" fill="#F3F5F8" fill-opacity="0.08" stroke="#F3F5F8" stroke-opacity="0.7" stroke-width="4.3" />
+    <polygon points="1205.20,234.70 1275.00,275.00 1275.00,355.60 1205.20,315.30" fill="#00F59B" fill-opacity="0.22" stroke="#00F59B" stroke-width="4.3" />
+    <polygon points="1275.00,275.00 1344.80,234.70 1344.80,315.30 1275.00,355.60" fill="#38BDF8" fill-opacity="0.22" stroke="#38BDF8" stroke-width="4.3" />
+
+    <!-- Circuit Terminal Nodes -->
+    <circle cx="1275.00" cy="275.00" r="9.27" fill="#F3F5F8" />
+    <circle cx="1140.77" cy="197.50" r="8.06" fill="#00F59B" />
+    <circle cx="1409.23" cy="197.50" r="8.06" fill="#38BDF8" />
+    <circle cx="1275.00" cy="430.00" r="8.06" fill="#F3F5F8" />
+  </g>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+# Dependencies & build artifacts
+node_modules/
+backend/dist/
+dist-pages/
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+__pycache__/
+*.pyc

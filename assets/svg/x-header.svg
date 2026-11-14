@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#181D2B" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="ambientMint" cx="25%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00F59B" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ambientCyan" cx="80%" cy="65%" r="55%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="twinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F59B"/>
+      <stop offset="50%" stop-color="#F3F5F8" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="vertGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F3F5F8"/>
+      <stop offset="100%" stop-color="#00F59B"/>
+    </linearGradient>
+    <filter id="softGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00F59B" flood-opacity="0.22"/>
+    </filter>
+    <clipPath id="canvasClip">
+      <rect width="1500" height="500"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#canvasClip)">
+    <rect width="1500" height="500" fill="#090A0F"/>
+    <rect width="1500" height="500" fill="url(#grid)"/>
+    <rect width="1500" height="500" fill="url(#ambientMint)"/>
+    <rect width="1500" height="500" fill="url(#ambientCyan)"/>
+
+    <!-- Top Status Line -->
+    <rect x="64" y="44" width="1372" height="44" rx="6" fill="#12151E" stroke="#222A3D" stroke-width="1.5"/>
+    <circle cx="92" cy="66" r="5" fill="#00F59B"/>
+    <text x="112" y="72" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="16" font-weight="600" letter-spacing="1.6" fill="#00F59B">TWIN-CONTRACT GENESIS // BASE MAINNET (L2)</text>
+    <text x="1410" y="72" text-anchor="end" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="15" fill="#94A3B8">@therigco · therig.co · HTTP 402 / x402 v2</text>
+
+    <!-- Main Identity (shifted right of X avatar safe zone) -->
+    <text x="320" y="190" font-family="Adwaita Sans, Noto Sans, Liberation Sans, sans-serif" font-size="68" font-weight="700" letter-spacing="-2" fill="#F3F5F8">THE RIG</text>
+    <text x="320" y="236" font-family="Adwaita Sans, Noto Sans, Liberation Sans, sans-serif" font-size="26" font-weight="500" fill="#94A3B8">Separate the <tspan fill="#00F59B" font-weight="700">machine</tspan> from the <tspan fill="#38BDF8" font-weight="700">fuel</tspan> at Block 0.</text>
+
+    <!-- Contract Pills -->
+    <rect x="320" y="274" width="380" height="72" rx="8" fill="#12151E" stroke="#00F59B" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="340" y="302" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="14" font-weight="700" fill="#00F59B">01 // $RIG HARDWARE INDEX</text>
+    <text x="340" y="328" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="16" fill="#F3F5F8">0xbfefd4d8...792315ba3</text>
+
+    <rect x="724" y="274" width="380" height="72" rx="8" fill="#12151E" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="744" y="302" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="14" font-weight="700" fill="#38BDF8">02 // $RGG EXECUTION GAS</text>
+    <text x="744" y="328" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="16" fill="#F3F5F8">0x36376c70...fb2547cba3</text>
+
+    <!-- Closed-Loop Value Flow Bar -->
+    <rect x="320" y="372" width="784" height="58" rx="6" fill="#0D1018" stroke="#222A3D" stroke-width="1.2"/>
+    <text x="344" y="407" font-family="JetBrainsMono NF, JetBrainsMono Nerd Font, Adwaita Mono, monospace" font-size="15" font-weight="600" fill="#94A3B8">
+      HTTP 402 INVOICE  →  <tspan fill="#38BDF8">$RGG GAS BURN</tspan>  →  <tspan fill="#00F59B">SPREAD SWEEP TO $RIG VAULT</tspan>
+    </text>
+
+    <!-- Right Isometric Emblem -->
+    
+  <g filter="url(#softGlow)">
+    <!-- Outer Carbon Facets -->
+    <polygon points="1290.00,127.00 1415.57,199.50 1290.00,272.00 1164.43,199.50" fill="#141926" stroke="#F3F5F8" stroke-opacity="0.16" stroke-width="4.1" />
+    <polygon points="1164.43,199.50 1290.00,272.00 1290.00,417.00 1164.43,344.50" fill="#0F131D" stroke="#00F59B" stroke-opacity="0.55" stroke-width="5.8" />
+    <polygon points="1290.00,272.00 1415.57,199.50 1415.57,344.50 1290.00,417.00" fill="#111623" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="5.8" />
+
+    <!-- Outer Isometric Wireframe -->
+    <polygon points="1290.00,127.00 1415.57,199.50 1415.57,344.50 1290.00,417.00 1164.43,344.50 1164.43,199.50" fill="none" stroke="url(#twinGrad)" stroke-width="5.8" stroke-linejoin="round" />
+
+    <!-- Internal Twin-Bus Dividers -->
+    <line x1="1290.00" y1="127.00" x2="1290.00" y2="272.00" stroke="#F3F5F8" stroke-opacity="0.45" stroke-width="4.1" />
+    <line x1="1164.43" y1="199.50" x2="1290.00" y2="272.00" stroke="#00F59B" stroke-width="5.8" stroke-linecap="round" />
+    <line x1="1415.57" y1="199.50" x2="1290.00" y2="272.00" stroke="#38BDF8" stroke-width="5.8" stroke-linecap="round" />
+    <line x1="1290.00" y1="272.00" x2="1290.00" y2="417.00" stroke="url(#vertGrad)" stroke-width="5.8" stroke-linecap="round" />
+
+    <!-- Inner Twin Core Cube -->
+    <polygon points="1290.00,196.60 1355.30,234.30 1290.00,272.00 1224.70,234.30" fill="#F3F5F8" fill-opacity="0.08" stroke="#F3F5F8" stroke-opacity="0.7" stroke-width="4.1" />
+    <polygon points="1224.70,234.30 1290.00,272.00 1290.00,347.40 1224.70,309.70" fill="#00F59B" fill-opacity="0.22" stroke="#00F59B" stroke-width="4.1" />
+    <polygon points="1290.00,272.00 1355.30,234.30 1355.30,309.70 1290.00,347.40" fill="#38BDF8" fill-opacity="0.22" stroke="#38BDF8" stroke-width="4.1" />
+
+    <!-- Circuit Terminal Nodes -->
+    <circle cx="1290.00" cy="272.00" r="8.67" fill="#F3F5F8" />
+    <circle cx="1164.43" cy="199.50" r="7.54" fill="#00F59B" />
+    <circle cx="1415.57" cy="199.50" r="7.54" fill="#38BDF8" />
+    <circle cx="1290.00" cy="417.00" r="7.54" fill="#F3F5F8" />
+  </g>
+  </g>
+</svg>
