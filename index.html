@@ -5,274 +5,566 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>THE RIG ($RIG + $RGG) — Twin-Genesis Autonomous Compute on Base</title>
   <meta name="description" content="Twin-contract genesis on Base: $RIG hardware reserve index + $RGG HTTP 402 (x402 v2) agent execution gas. Verifiable on-chain telemetry." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect width='24' height='24' rx='5' fill='%23090A0F'/%3E%3Cpolygon points='12,3 20,7.5 20,16.5 12,21 4,16.5 4,7.5' stroke='%2300F59B' stroke-width='1.8'/%3E%3Cline x1='12' y1='3' x2='12' y2='12' stroke='%2300F59B' stroke-width='1.8'/%3E%3Cline x1='20' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3Cline x1='4' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect width='24' height='24' rx='5' fill='%2307090D'/%3E%3Cpolygon points='12,3 20,7.5 20,16.5 12,21 4,16.5 4,7.5' stroke='%2306F19A' stroke-width='1.8'/%3E%3Cline x1='12' y1='3' x2='12' y2='12' stroke='%2306F19A' stroke-width='1.8'/%3E%3Cline x1='20' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3Cline x1='4' y1='7.5' x2='12' y2='12' stroke='%2338BDF8' stroke-width='1.8'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" /></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" /></noscript>
   <style>
+    /* =========================================================================
+       THE RIG DESIGN SYSTEM — Semantic HSL Token Architecture (8px base unit)
+       Harmony: Obsidian Neutrals + Analogous Emerald (158°) & Sky-Cyan (198°)
+       ========================================================================= */
     :root {
-      --bg-primary: #090A0F;
-      --bg-secondary: #12151E;
-      --bg-tertiary: #181C28;
-      --accent-mint: #00F59B;
-      --accent-mint-dim: rgba(0, 245, 155, 0.12);
-      --accent-mint-border: rgba(0, 245, 155, 0.28);
-      --accent-cyan: #38BDF8;
-      --accent-cyan-dim: rgba(56, 189, 248, 0.12);
-      --accent-cyan-border: rgba(56, 189, 248, 0.28);
-      --text-primary: #F3F5F8;
-      --text-secondary: #94A3B8;
-      --text-muted: #64748B;
-      --border-subtle: rgba(148, 163, 184, 0.12);
-      --border-strong: rgba(148, 163, 184, 0.22);
-      --font-display: 'Inter Tight', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      /* Surfaces (Obsidian -> Elevated Titanium) */
+      --background: 225 28% 4%;
+      --surface-1: 224 24% 8%;
+      --surface-2: 224 21% 11%;
+      --surface-3: 224 19% 15%;
+      --surface-glass: hsl(224 26% 7% / 0.74);
+
+      /* Brand & Semantic Accents */
+      --primary: 158 95% 48%;
+      --primary-glow: 158 95% 64%;
+      --primary-foreground: 225 38% 5%;
+      --accent: 198 94% 60%;
+      --accent-glow: 198 96% 74%;
+      --accent-foreground: 225 38% 5%;
+      --warning: 38 92% 60%;
+
+      /* Accessible Text Hierarchy (WCAG AA >= 4.5:1 on surfaces) */
+      --foreground: 220 25% 97%;
+      --foreground-secondary: 218 16% 76%;
+      --foreground-muted: 216 14% 64%;
+
+      /* Structural Hairlines & Translucent Fills */
+      --border: hsl(220 22% 92% / 0.08);
+      --border-strong: hsl(220 22% 92% / 0.16);
+      --primary-soft: hsl(var(--primary) / 0.11);
+      --primary-border: hsl(var(--primary) / 0.28);
+      --accent-soft: hsl(var(--accent) / 0.11);
+      --accent-border: hsl(var(--accent) / 0.28);
+
+      /* Gradients & Elevation */
+      --gradient-brand: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+      --gradient-surface: linear-gradient(180deg, hsl(224 22% 11% / 0.92) 0%, hsl(224 25% 7% / 0.96) 100%);
+      --shadow-card: 0 1px 0 hsl(220 30% 96% / 0.05) inset, 0 24px 48px -20px hsl(225 50% 2% / 0.78);
+      --shadow-glow: 0 0 36px -8px hsl(var(--primary) / 0.42);
+      --shadow-accent-glow: 0 0 32px -8px hsl(var(--accent) / 0.38);
+
+      /* Radii & Spacing Scale (8px base) */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-pill: 9999px;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-6: 48px;
+      --space-8: 64px;
+      --space-12: 96px;
+
+      /* Motion Curves & Typography */
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --transition-fast: 160ms var(--ease-out);
+      --transition-smooth: 260ms var(--ease-out);
+      --font-display: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     html {
       scroll-behavior: smooth;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
       font-family: var(--font-sans);
+      font-size: 16px;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
     body {
+      position: relative;
       min-height: 100vh;
-      background-color: var(--bg-primary);
-      background-image:
-        linear-gradient(to right, rgba(18, 21, 30, 0.65) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(18, 21, 30, 0.65) 1px, transparent 1px);
-      background-size: 48px 48px;
+      overflow-x: clip;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
       line-height: 1.6;
     }
 
-    a { color: inherit; text-decoration: none; }
+    /* Atmospheric Radial Aura + Masked Precision Dot Matrix */
+    .ambient-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient-backdrop::before {
+      content: '';
+      position: absolute;
+      inset: -15% -10% auto -10%;
+      height: 760px;
+      background:
+        radial-gradient(520px 360px at 22% 14%, hsl(var(--primary) / 0.13), transparent 70%),
+        radial-gradient(560px 380px at 78% 18%, hsl(var(--accent) / 0.13), transparent 72%),
+        radial-gradient(460px 300px at 50% 0%, hsl(220 40% 25% / 0.14), transparent 70%);
+    }
+
+    .ambient-backdrop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(hsl(220 20% 70% / 0.16) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 85% 65% at 50% 12%, #000 18%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 85% 65% at 50% 12%, #000 18%, transparent 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid hsl(var(--primary));
+      outline-offset: 2px;
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
 
     .container {
       width: 100%;
-      max-width: 1120px;
+      max-width: 1184px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 var(--space-3);
     }
 
+    /* =========================================================================
+       COMPONENT: Topbar Navigation
+       ========================================================================= */
     .topbar {
-      border-bottom: 1px solid var(--border-subtle);
-      background: rgba(9, 10, 15, 0.88);
-      backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 50;
+      border-bottom: 1px solid var(--border);
+      background: hsl(var(--background) / 0.78);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
     }
 
     .topbar-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 64px;
-      gap: 16px;
+      height: 68px;
+      gap: var(--space-2);
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.125rem;
-      letter-spacing: -0.02em;
+      font-size: 1.08rem;
+      letter-spacing: -0.025em;
     }
 
     .brand-mark {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
-      background: var(--bg-secondary);
-      border: 1px solid var(--accent-mint-border);
-      border-radius: 6px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(145deg, hsl(var(--surface-2)), hsl(var(--surface-1)));
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 0 22px -6px hsl(var(--primary) / 0.35);
+      flex-shrink: 0;
     }
 
-    .ticker-badge {
+    .brand-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-family: var(--font-mono);
       font-size: 0.72rem;
       font-weight: 600;
-      color: var(--accent-mint);
-      background: var(--accent-mint-dim);
-      border: 1px solid var(--accent-mint-border);
-      padding: 2px 8px;
-      border-radius: 4px;
+      letter-spacing: 0.03em;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-strong);
     }
 
-    .ticker-badge.gas {
-      color: var(--accent-cyan);
-      background: var(--accent-cyan-dim);
-      border-color: var(--accent-cyan-border);
+    .badge--primary {
+      color: hsl(var(--primary-glow));
+      background: var(--primary-soft);
+      border-color: var(--primary-border);
+    }
+
+    .badge--accent {
+      color: hsl(var(--accent-glow));
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
+
+    .badge--neutral {
+      color: hsl(var(--foreground-secondary));
+      background: hsl(var(--surface-2));
+      border-color: var(--border);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 28px;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
+      gap: 6px;
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      background: hsl(var(--surface-1) / 0.75);
+      border: 1px solid var(--border);
     }
 
-    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: hsl(var(--foreground-secondary));
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .nav-links a:hover {
+      color: hsl(var(--foreground));
+      background: hsl(var(--surface-3) / 0.8);
+    }
 
     .nav-actions {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
+    /* =========================================================================
+       COMPONENT: Button Variants
+       ========================================================================= */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 9px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.16s ease;
+      font-family: var(--font-sans);
+      font-size: 0.86rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
       border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        transform var(--transition-fast),
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        color var(--transition-fast);
     }
 
-    .btn-primary {
-      background: var(--accent-mint);
-      color: #05070A;
-      font-weight: 600;
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
     }
 
-    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
-
-    .btn-cyan {
-      background: var(--accent-cyan-dim);
-      color: var(--accent-cyan);
-      border-color: var(--accent-cyan-border);
-      font-weight: 600;
+    .btn--sm {
+      padding: 8px 13px;
+      font-size: 0.8rem;
+      border-radius: var(--radius-sm);
     }
 
-    .btn-cyan:hover { background: var(--accent-cyan); color: #05070A; }
+    .btn--primary {
+      background: var(--gradient-brand);
+      color: hsl(var(--primary-foreground));
+      box-shadow: 0 1px 0 hsl(0 0% 100% / 0.35) inset, var(--shadow-glow);
+    }
 
-    .btn-secondary {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
+    .btn--primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 hsl(0 0% 100% / 0.45) inset, 0 0 42px -4px hsl(var(--primary) / 0.55);
+    }
+
+    .btn--accent {
+      background: hsl(var(--accent) / 0.14);
+      color: hsl(var(--accent-glow));
+      border-color: var(--accent-border);
+    }
+
+    .btn--accent:hover {
+      transform: translateY(-1px);
+      background: hsl(var(--accent) / 0.22);
+      border-color: hsl(var(--accent));
+      box-shadow: var(--shadow-accent-glow);
+    }
+
+    .btn--outline {
+      background: hsl(var(--surface-1) / 0.9);
+      color: hsl(var(--foreground));
       border-color: var(--border-strong);
     }
 
-    .btn-secondary:hover { border-color: var(--accent-mint); color: var(--accent-mint); }
+    .btn--outline:hover {
+      transform: translateY(-1px);
+      background: hsl(var(--surface-2));
+      border-color: var(--primary-border);
+      color: hsl(var(--primary-glow));
+    }
 
+    .btn--ghost {
+      background: transparent;
+      color: hsl(var(--foreground-secondary));
+      border-color: var(--border);
+    }
+
+    .btn--ghost:hover {
+      color: hsl(var(--foreground));
+      background: hsl(var(--surface-2));
+      border-color: var(--border-strong);
+    }
+
+    /* =========================================================================
+       SECTION: Hero + Twin-Genesis Interactive Console
+       ========================================================================= */
     .hero {
-      padding: 72px 0 60px;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 46px 0 46px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      gap: var(--space-6);
+      align-items: center;
+    }
+
+    .hero-grid > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .hero-entrance {
+      animation: fadeInUp 420ms var(--ease-out) both;
+    }
+
+    .hero-entrance-delay {
+      animation: fadeInUp 480ms var(--ease-out) 90ms both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      max-width: 100%;
+      min-width: 0;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-      color: var(--accent-mint);
-      background: var(--accent-mint-dim);
-      border: 1px solid var(--accent-mint-border);
-      padding: 6px 12px;
-      border-radius: 4px;
-      margin-bottom: 24px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: hsl(var(--primary-glow));
+      background: linear-gradient(90deg, hsl(var(--primary) / 0.14), hsl(var(--accent) / 0.08));
+      border: 1px solid var(--primary-border);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: var(--space-3);
+      box-shadow: 0 0 24px -10px hsl(var(--primary) / 0.5);
+    }
+
+    #hero-status-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .pulse-dot {
       width: 8px;
       height: 8px;
+      flex-shrink: 0;
       border-radius: 50%;
-      background: var(--accent-mint);
-      box-shadow: 0 0 10px var(--accent-mint);
-      animation: pulse 2s infinite;
+      background: hsl(var(--primary));
+      box-shadow: 0 0 12px hsl(var(--primary));
+      animation: pulseDot 2.2s ease-in-out infinite;
     }
 
-    @keyframes pulse {
+    @keyframes pulseDot {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.88); }
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.22fr 0.78fr;
-      gap: 44px;
-      align-items: start;
+      50% { opacity: 0.45; transform: scale(0.84); }
     }
 
     .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(2.4rem, 4.8vw, 3.85rem);
+      font-size: clamp(2.4rem, 4.7vw, 4rem);
       font-weight: 700;
-      line-height: 1.06;
-      letter-spacing: -0.03em;
-      margin-bottom: 18px;
+      line-height: 1.03;
+      letter-spacing: -0.04em;
+      margin-bottom: var(--space-2);
+      color: hsl(var(--foreground));
     }
 
-    .hero h1 span.mint { color: var(--accent-mint); }
-    .hero h1 span.cyan { color: var(--accent-cyan); }
+    .text-gradient-primary {
+      background: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(var(--primary)));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .text-gradient-accent {
+      background: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(var(--accent)));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
     .hero-sub {
-      font-size: 1.075rem;
-      color: var(--text-secondary);
-      max-width: 590px;
-      margin-bottom: 28px;
+      font-size: 1.04rem;
+      line-height: 1.62;
+      color: hsl(var(--foreground-secondary));
+      max-width: 560px;
+      margin-bottom: var(--space-3);
     }
 
-    .ca-wrapper {
+    .hero-sub strong {
+      color: hsl(var(--foreground));
+      font-weight: 600;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: var(--space-3);
+    }
+
+    /* Unified Twin-Contract Switcher Panel */
+    .ca-dock {
+      position: relative;
+      border-radius: var(--radius-lg);
+      background: var(--gradient-surface);
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      width: 100%;
+      max-width: 600px;
+      min-width: 0;
+    }
+
+    .ca-dock::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.45), hsl(var(--accent) / 0.45), transparent);
+      pointer-events: none;
+    }
+
+    .ca-unit {
+      padding: 13px 16px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-width: 620px;
-      margin-bottom: 28px;
+      gap: 8px;
+      min-width: 0;
+      border-bottom: 1px solid var(--border);
+      transition: background-color var(--transition-fast);
     }
 
-    .ca-unit { display: flex; flex-direction: column; gap: 6px; }
+    .ca-unit:last-child {
+      border-bottom: none;
+    }
+
+    .ca-unit:hover {
+      background: hsl(var(--surface-2) / 0.45);
+    }
 
     .ca-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-1);
+      min-width: 0;
       font-family: var(--font-mono);
       font-size: 0.72rem;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      color: hsl(var(--foreground-muted));
     }
 
-    .ca-role-tag { font-weight: 600; color: var(--accent-mint); }
-    .ca-role-tag.gas { color: var(--accent-cyan); }
+    .ca-role-tag {
+      font-weight: 600;
+      color: hsl(var(--primary-glow));
+    }
+
+    .ca-role-tag.gas {
+      color: hsl(var(--accent-glow));
+    }
 
     .ca-box {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-strong);
-      padding: 11px 14px;
-      border-radius: 6px;
-      transition: border-color 0.15s ease;
+      gap: 10px;
+      min-width: 0;
+      max-width: 100%;
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      background: hsl(var(--background) / 0.75);
+      border: 1px solid var(--border);
+      border-left: 2px solid hsl(var(--primary));
+      transition: border-color var(--transition-fast);
     }
 
-    .ca-box:hover { border-color: var(--accent-mint-border); }
-    .ca-box.gas-box:hover { border-color: var(--accent-cyan-border); }
+    .ca-box.gas-box {
+      border-left-color: hsl(var(--accent));
+    }
+
+    .ca-box:hover {
+      border-color: var(--primary-border);
+      border-left-color: hsl(var(--primary));
+    }
+
+    .ca-box.gas-box:hover {
+      border-color: var(--accent-border);
+      border-left-color: hsl(var(--accent));
+    }
 
     .ca-address {
       font-family: var(--font-mono);
-      font-size: 0.84rem;
-      color: var(--text-primary);
+      font-size: 0.82rem;
+      color: hsl(var(--foreground));
+      min-width: 0;
+      flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -286,101 +578,250 @@
       flex-shrink: 0;
     }
 
-    .copy-btn {
-      background: var(--bg-tertiary);
-      color: var(--accent-mint);
-      border: 1px solid var(--accent-mint-border);
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .copy-btn:hover, .copy-btn.copied { background: var(--accent-mint); color: #05070A; }
-
-    .copy-btn.gas-btn { color: var(--accent-cyan); border-color: var(--accent-cyan-border); }
-    .copy-btn.gas-btn:hover, .copy-btn.gas-btn.copied { background: var(--accent-cyan); color: #05070A; }
-
     .mini-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       font-family: var(--font-mono);
       font-size: 0.72rem;
-      color: var(--text-secondary);
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-subtle);
-      padding: 6px 9px;
-      border-radius: 4px;
+      font-weight: 500;
+      color: hsl(var(--foreground-secondary));
+      background: hsl(var(--surface-2));
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
     }
 
-    .mini-link:hover { color: var(--text-primary); border-color: var(--border-strong); }
+    .mini-link:hover {
+      color: hsl(var(--foreground));
+      border-color: var(--border-strong);
+      background: hsl(var(--surface-3));
+    }
 
-    .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--primary-soft);
+      color: hsl(var(--primary-glow));
+      border: 1px solid var(--primary-border);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
 
+    .copy-btn:hover,
+    .copy-btn.copied {
+      background: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
+      border-color: hsl(var(--primary));
+    }
+
+    .copy-btn.gas-btn {
+      background: var(--accent-soft);
+      color: hsl(var(--accent-glow));
+      border-color: var(--accent-border);
+    }
+
+    .copy-btn.gas-btn:hover,
+    .copy-btn.gas-btn.copied {
+      background: hsl(var(--accent));
+      color: hsl(var(--accent-foreground));
+      border-color: hsl(var(--accent));
+    }
+
+    /* Right Hero Column: Genesis Specification Module + Core Schematic */
     .charter-card {
-      background: var(--bg-secondary);
+      position: relative;
+      background: var(--gradient-surface);
       border: 1px solid var(--border-strong);
-      border-radius: 8px;
-      padding: 24px;
+      border-radius: var(--radius-xl);
+      padding: var(--space-3);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .charter-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.55), hsl(var(--primary) / 0.55), transparent);
+    }
+
+    .charter-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      margin-bottom: var(--space-2);
+      border-radius: var(--radius-md);
+      background:
+        radial-gradient(240px 140px at 18% 50%, hsl(var(--primary) / 0.14), transparent 70%),
+        radial-gradient(240px 140px at 85% 50%, hsl(var(--accent) / 0.14), transparent 70%),
+        hsl(var(--background) / 0.82);
+      border: 1px solid var(--border);
+    }
+
+    .core-emblem {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      filter: drop-shadow(0 0 18px hsl(var(--primary) / 0.28));
+    }
+
+    .core-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .core-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--foreground-muted));
+    }
+
+    .core-heading {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: hsl(var(--foreground));
+    }
+
+    .core-ratio-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .ratio-track {
+      flex: 1;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background: hsl(var(--surface-3));
+      overflow: hidden;
+      display: flex;
+    }
+
+    .ratio-rig {
+      width: 50%;
+      background: hsl(var(--primary));
+    }
+
+    .ratio-rgg {
+      width: 50%;
+      background: hsl(var(--accent));
     }
 
     .charter-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 0 12px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: hsl(var(--foreground-muted));
     }
 
     .charter-row {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 0.875rem;
+      align-items: center;
+      padding: 11px 4px;
+      border-bottom: 1px solid var(--border);
       gap: 12px;
+      font-size: 0.86rem;
     }
 
-    .charter-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .charter-row:last-child {
+      border-bottom: none;
+      padding-bottom: 2px;
+    }
 
     .charter-key {
-      color: var(--text-muted);
+      color: hsl(var(--foreground-muted));
       font-family: var(--font-mono);
-      font-size: 0.76rem;
+      font-size: 0.74rem;
+      letter-spacing: 0.03em;
     }
 
     .charter-val {
       font-family: var(--font-mono);
-      font-weight: 500;
-      color: var(--text-primary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: hsl(var(--foreground));
       text-align: right;
     }
 
-    .charter-val.mint { color: var(--accent-mint); }
-    .charter-val.cyan { color: var(--accent-cyan); }
+    .charter-val.mint { color: hsl(var(--primary-glow)); }
+    .charter-val.cyan { color: hsl(var(--accent-glow)); }
 
+    /* =========================================================================
+       SECTION: Live Bento Metrics Strip
+       ========================================================================= */
     .metrics-section {
-      padding: 40px 0;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 36px 0;
+      border-bottom: 1px solid var(--border);
     }
 
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: var(--space-2);
     }
 
     .metric-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 20px;
+      position: relative;
+      background: var(--gradient-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition-smooth), border-color var(--transition-smooth);
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.45), transparent);
+      opacity: 0.75;
+    }
+
+    .metric-card.accent-top::before {
+      background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.5), transparent);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+    }
+
+    .metric-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .metric-label {
@@ -388,115 +829,177 @@
       font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+      color: hsl(var(--foreground-muted));
+    }
+
+    .metric-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      background: var(--primary-soft);
+      color: hsl(var(--primary-glow));
+      border: 1px solid var(--primary-border);
+    }
+
+    .metric-icon.cyan {
+      background: var(--accent-soft);
+      color: hsl(var(--accent-glow));
+      border-color: var(--accent-border);
     }
 
     .metric-value {
       font-family: var(--font-display);
-      font-size: 1.65rem;
+      font-size: 1.72rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
+      letter-spacing: -0.025em;
+      color: hsl(var(--foreground));
+      line-height: 1.2;
     }
 
     .metric-delta {
       font-family: var(--font-mono);
-      font-size: 0.74rem;
-      color: var(--accent-mint);
-      margin-top: 6px;
+      font-size: 0.75rem;
+      color: hsl(var(--primary-glow));
+      margin-top: 8px;
     }
 
-    .metric-delta.cyan { color: var(--accent-cyan); }
-    .metric-delta.muted { color: var(--text-secondary); }
+    .metric-delta.cyan { color: hsl(var(--accent-glow)); }
+    .metric-delta.muted { color: hsl(var(--foreground-secondary)); }
 
+    /* =========================================================================
+       SECTION: Dual-Primitive Live Telemetry Terminal
+       ========================================================================= */
     .terminal-section {
-      padding: 72px 0;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--space-8) 0;
+      border-bottom: 1px solid var(--border);
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 28px;
-      gap: 16px;
+      margin-bottom: var(--space-4);
+      gap: var(--space-2);
       flex-wrap: wrap;
     }
 
     .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--accent-mint);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: hsl(var(--primary-glow));
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 8px;
+      margin-bottom: var(--space-1);
     }
 
     .section-title {
       font-family: var(--font-display);
-      font-size: 1.875rem;
+      font-size: clamp(1.65rem, 2.8vw, 2.25rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .section-sub {
+      color: hsl(var(--foreground-secondary));
+      font-size: 0.96rem;
+      margin-top: 8px;
+      max-width: 620px;
+    }
+
+    .terminal-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 5px;
+      border-radius: var(--radius-md);
+      background: hsl(var(--surface-1));
+      border: 1px solid var(--border);
+    }
+
+    .term-btn {
+      background: transparent;
+      color: hsl(var(--foreground-secondary));
+      border: 1px solid transparent;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 6px 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .term-btn:hover {
+      color: hsl(var(--foreground));
+      background: hsl(var(--surface-2));
+    }
+
+    .term-btn.active {
+      color: hsl(var(--primary-foreground));
+      background: hsl(var(--primary));
+      border-color: hsl(var(--primary));
+      font-weight: 600;
     }
 
     .terminal-window {
-      background: #06070B;
+      background: hsl(225 32% 3.5%);
       border: 1px solid var(--border-strong);
-      border-radius: 8px;
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 28px 64px -22px hsl(225 60% 1% / 0.85);
     }
 
     .terminal-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 16px;
+      background: linear-gradient(180deg, hsl(var(--surface-2)), hsl(var(--surface-1)));
+      border-bottom: 1px solid var(--border);
+      padding: 13px 18px;
       gap: 12px;
       flex-wrap: wrap;
     }
 
-    .terminal-dots { display: flex; align-items: center; gap: 8px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: #2A3040; }
-    .dot.active { background: var(--accent-mint); }
+    .terminal-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: hsl(var(--surface-3));
+      border: 1px solid var(--border);
+    }
+
+    .dot.active {
+      background: hsl(var(--primary));
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.6);
+    }
 
     .terminal-title {
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .terminal-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .term-btn {
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-subtle);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .term-btn:hover, .term-btn.active {
-      color: var(--accent-mint);
-      border-color: var(--accent-mint-border);
+      color: hsl(var(--foreground-secondary));
     }
 
     .terminal-body {
       padding: 20px;
       font-family: var(--font-mono);
       font-size: 0.8125rem;
-      height: 360px;
+      min-height: 160px;
+      max-height: 360px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -508,102 +1011,230 @@
       grid-template-columns: 82px 96px 76px 1fr auto;
       gap: 12px;
       align-items: baseline;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.06);
-      animation: fadeIn 0.25s ease;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: hsl(var(--surface-1) / 0.42);
+      border: 1px solid hsl(220 20% 90% / 0.04);
+      animation: fadeInLine 220ms var(--ease-out);
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInLine {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .log-time { color: var(--text-muted); }
-    .log-agent { color: var(--text-primary); font-weight: 600; }
+    .log-time { color: hsl(var(--foreground-muted)); }
+    .log-agent { color: hsl(var(--foreground)); font-weight: 600; }
 
     .log-token {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      padding: 1px 6px;
-      border-radius: 3px;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
       text-align: center;
       width: fit-content;
     }
 
     .log-token.rig {
-      color: var(--accent-mint);
-      background: var(--accent-mint-dim);
-      border: 1px solid var(--accent-mint-border);
+      color: hsl(var(--primary-glow));
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
     }
 
     .log-token.rgg {
-      color: var(--accent-cyan);
-      background: var(--accent-cyan-dim);
-      border: 1px solid var(--accent-cyan-border);
+      color: hsl(var(--accent-glow));
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
     }
 
     .log-token.sys {
-      color: var(--text-secondary);
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-subtle);
+      color: hsl(var(--foreground-secondary));
+      background: hsl(var(--surface-2));
+      border: 1px solid var(--border);
     }
 
-    .log-msg { color: var(--text-secondary); }
-    .log-hash { color: var(--text-muted); font-size: 0.75rem; }
-    .log-hash a:hover { color: var(--accent-mint); text-decoration: underline; }
+    .log-msg { color: hsl(var(--foreground-secondary)); }
+    .log-hash { color: hsl(var(--foreground-muted)); font-size: 0.74rem; }
+    .log-hash a:hover { color: hsl(var(--primary-glow)); text-decoration: underline; }
 
-    .pillars-section { padding: 72px 0; border-bottom: 1px solid var(--border-subtle); }
+    /* =========================================================================
+       SECTION: Twin-Flywheel Architecture + Flow Loop
+       ========================================================================= */
+    .pillars-section {
+      padding: var(--space-8) 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .flow-banner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: var(--space-4);
+      padding: var(--space-3);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(380px 180px at 15% 50%, hsl(var(--accent) / 0.09), transparent 70%),
+        radial-gradient(380px 180px at 85% 50%, hsl(var(--primary) / 0.09), transparent 70%),
+        hsl(var(--surface-1));
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-card);
+    }
+
+    .flow-node {
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: hsl(var(--background) / 0.7);
+      border: 1px solid var(--border);
+    }
+
+    .flow-step {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: hsl(var(--accent-glow));
+      margin-bottom: 6px;
+    }
+
+    .flow-step.mint { color: hsl(var(--primary-glow)); }
+
+    .flow-node h4 {
+      font-family: var(--font-display);
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .flow-node p {
+      font-size: 0.85rem;
+      color: hsl(var(--foreground-secondary));
+      line-height: 1.5;
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: hsl(var(--surface-2));
+      border: 1px solid var(--border-strong);
+      color: hsl(var(--foreground-secondary));
+    }
 
     .pillars-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: var(--space-3);
     }
 
     .pillar-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 28px;
+      position: relative;
+      background: var(--gradient-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition-smooth), border-color var(--transition-smooth);
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-strong);
     }
 
     .pillar-index {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--accent-mint);
-      margin-bottom: 14px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: hsl(var(--primary-glow));
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: var(--space-2);
     }
 
-    .pillar-index.cyan { color: var(--accent-cyan); }
+    .pillar-index.cyan {
+      color: hsl(var(--accent-glow));
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
 
     .pillar-card h3 {
       font-family: var(--font-display);
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
       margin-bottom: 10px;
     }
 
-    .pillar-card p { font-size: 0.925rem; color: var(--text-secondary); }
-
-    .manifesto-section { padding: 72px 0; }
-
-    .manifesto-box {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-strong);
-      border-left: 3px solid var(--accent-mint);
-      border-radius: 8px;
-      padding: 36px;
-      max-width: 840px;
+    .pillar-card p {
+      font-size: 0.94rem;
+      color: hsl(var(--foreground-secondary));
+      line-height: 1.65;
     }
 
-    .manifesto-box p { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 18px; }
-    .manifesto-box p:last-child { margin-bottom: 0; color: var(--text-primary); font-weight: 500; }
+    /* =========================================================================
+       SECTION: Operational Thesis
+       ========================================================================= */
+    .manifesto-section {
+      padding: var(--space-8) 0 var(--space-12);
+    }
 
+    .manifesto-box {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      background:
+        radial-gradient(500px 260px at 0% 0%, hsl(var(--primary) / 0.1), transparent 70%),
+        var(--gradient-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+    }
+
+    .manifesto-lead {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 2.3vw, 1.75rem);
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.025em;
+      color: hsl(var(--foreground));
+    }
+
+    .manifesto-copy {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .manifesto-copy p {
+      font-size: 0.98rem;
+      color: hsl(var(--foreground-secondary));
+      line-height: 1.7;
+    }
+
+    .manifesto-copy p:last-child {
+      color: hsl(var(--foreground));
+      font-weight: 500;
+    }
+
+    /* =========================================================================
+       FOOTER
+       ========================================================================= */
     footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 36px 0;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: hsl(var(--surface-1) / 0.55);
+      padding: var(--space-4) 0;
+      font-size: 0.84rem;
+      color: hsl(var(--foreground-muted));
     }
 
     .footer-inner {
@@ -611,272 +1242,422 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: var(--space-2);
+    }
+
+    .footer-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
     }
 
     .footer-links {
       display: flex;
-      gap: 24px;
+      gap: var(--space-3);
       font-family: var(--font-mono);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       flex-wrap: wrap;
     }
 
-    .footer-links a:hover { color: var(--accent-mint); }
+    .footer-links a {
+      color: hsl(var(--foreground-secondary));
+      transition: color var(--transition-fast);
+    }
 
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; }
+    .footer-links a:hover {
+      color: hsl(var(--primary-glow));
+    }
+
+    /* =========================================================================
+       RESPONSIVE BREAKPOINTS & REDUCED MOTION
+       ========================================================================= */
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
       .pillars-grid { grid-template-columns: 1fr; }
+      .flow-banner { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); margin: 0 auto; }
+      .manifesto-box { grid-template-columns: 1fr; padding: var(--space-4); }
       .nav-links { display: none; }
       .log-line { grid-template-columns: 74px 86px 64px 1fr; }
       .log-hash { display: none; }
     }
 
     @media (max-width: 640px) {
-      .container { padding: 0 16px; }
-      .brand { font-size: 1rem; white-space: nowrap; }
+      .container { padding: 0 var(--space-2); }
+      .topbar-inner { height: 60px; }
+      .brand { font-size: 0.98rem; white-space: nowrap; }
       .brand .ticker-badge { display: none; }
-      .nav-actions { gap: 8px; flex-shrink: 0; }
-      .nav-actions .btn { padding: 6px 10px; font-size: 0.72rem; white-space: nowrap; }
+      .nav-actions { gap: 8px; }
+      .nav-actions .btn { padding: 7px 10px; font-size: 0.75rem; }
+      .status-pill { font-size: 0.64rem; letter-spacing: 0.03em; padding: 5px 10px; gap: 8px; }
       .ca-label { flex-wrap: wrap; gap: 4px; }
-      .hero { padding: 48px 0 44px; }
+      .ca-box { padding: 8px 10px; gap: 8px; }
+      .hero { padding: 36px 0 44px; }
+      .hero-cta-row { gap: 10px; }
+      .hero-cta-row .btn { width: 100%; }
+      .terminal-body { min-height: 140px; max-height: 290px; padding: 14px; }
     }
 
     @media (max-width: 520px) {
       .metrics-grid { grid-template-columns: 1fr; }
-      .log-line { grid-template-columns: 70px 64px 1fr; }
+      .log-line { grid-template-columns: 68px 60px 1fr; gap: 8px; }
       .log-agent { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-entrance,
+      .hero-entrance-delay,
+      .pulse-dot,
+      .log-line {
+        animation: none !important;
+      }
+      .btn,
+      .metric-card,
+      .pillar-card {
+        transition: none !important;
+        transform: none !important;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="ambient-backdrop" aria-hidden="true"></div>
 
   <header class="topbar">
     <div class="container topbar-inner">
       <a href="#" class="brand">
         <div class="brand-mark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" stroke="#00F59B" stroke-width="2" />
-            <line x1="12" y1="2" x2="12" y2="12" stroke="#00F59B" stroke-width="2" />
-            <line x1="21" y1="7" x2="12" y2="12" stroke="#38BDF8" stroke-width="2" />
-            <line x1="3" y1="7" x2="12" y2="12" stroke="#38BDF8" stroke-width="2" />
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <polygon points="12,2.5 20.5,7.4 20.5,16.6 12,21.5 3.5,16.6 3.5,7.4" stroke="url(#navCubeGrad)" stroke-width="1.8" stroke-linejoin="round" />
+            <line x1="12" y1="2.5" x2="12" y2="12" stroke="#F5F7FA" stroke-opacity="0.65" stroke-width="1.5" />
+            <line x1="3.5" y1="7.4" x2="12" y2="12" stroke="#06F19A" stroke-width="1.8" stroke-linecap="round" />
+            <line x1="20.5" y1="7.4" x2="12" y2="12" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" />
+            <line x1="12" y1="12" x2="12" y2="21.5" stroke="#06F19A" stroke-width="1.8" stroke-linecap="round" />
+            <defs>
+              <linearGradient id="navCubeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06F19A" />
+                <stop offset="100%" stop-color="#38BDF8" />
+              </linearGradient>
+            </defs>
           </svg>
         </div>
         <span>THE RIG</span>
-        <span class="ticker-badge">$RIG</span>
-        <span class="ticker-badge gas">$RGG</span>
+        <span class="brand-pills">
+          <span class="badge badge--primary ticker-badge">$RIG</span>
+          <span class="badge badge--accent ticker-badge gas">$RGG</span>
+        </span>
       </a>
 
-      <nav class="nav-links">
+      <nav class="nav-links" aria-label="Primary Navigation">
         <a href="#telemetry">Live Tape</a>
         <a href="#flywheel">Twin Flywheel</a>
         <a href="#thesis">Thesis</a>
       </nav>
 
       <div class="nav-actions">
-        <a id="nav-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn-primary">$RIG Chart ↗</a>
-        <a id="nav-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn-cyan">$RGG Chart ↗</a>
+        <a id="nav-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn--sm btn--outline">$RIG Chart</a>
+        <a id="nav-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn--sm btn--accent">$RGG Chart</a>
       </div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container hero-grid">
-      <div>
-        <div class="status-pill">
-          <span class="pulse-dot"></span>
-          <span id="hero-status-text">TWIN-CONTRACT GENESIS // ...5BA3 + ...CBA3 ON BASE</span>
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-entrance">
+          <div class="status-pill">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span id="hero-status-text">TWIN-CONTRACT GENESIS // ...5BA3 + ...CBA3 ON BASE</span>
+          </div>
+
+          <h1>
+            Separate the <span class="text-gradient-primary">machine</span> from the <span class="text-gradient-accent">fuel</span>.
+          </h1>
+
+          <p class="hero-sub">
+            Single-token AI projects bleed reserves whenever agents pay for compute. The Rig isolates bare-metal cluster equity (<strong>$RIG</strong>) from high-velocity HTTP 402 execution gas (<strong>$RGG</strong>) at Block 0.
+          </p>
+
+          <div class="hero-cta-row">
+            <a href="#telemetry" class="btn btn--primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Inspect Live Tape
+            </a>
+            <a id="cta-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn--outline">
+              Trade $RIG (Reserve)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+            <a id="cta-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn--accent">
+              Trade $RGG (Gas)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+
+          <!-- FR-04: Clean single-line #ca-rig and #ca-rgg DOM IDs for sub-30s CA hot-swap -->
+          <div class="ca-dock">
+            <div class="ca-unit">
+              <div class="ca-label">
+                <span>01 // $RIG — BARE-METAL HARDWARE INDEX</span>
+                <span class="ca-role-tag" id="status-rig">CAPITAL &amp; RESERVE LAYER</span>
+              </div>
+              <div class="ca-box">
+                <code class="ca-address" id="ca-rig">0xbfefd4d88899830d756b2678944770a792315ba3</code>
+                <div class="ca-actions">
+                  <a id="scan-rig" href="https://basescan.org/token/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="mini-link">SCAN</a>
+                  <button type="button" class="copy-btn" data-target="ca-rig" data-status="status-rig">COPY $RIG</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ca-unit">
+              <div class="ca-label">
+                <span>02 // $RGG — AGENT EXECUTION GAS</span>
+                <span class="ca-role-tag gas" id="status-rgg">X402 THROUGHPUT LAYER</span>
+              </div>
+              <div class="ca-box gas-box">
+                <code class="ca-address" id="ca-rgg">0x36376c7058894685507eca5112d04cfb2547cba3</code>
+                <div class="ca-actions">
+                  <a id="scan-rgg" href="https://basescan.org/token/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="mini-link">SCAN</a>
+                  <button type="button" class="copy-btn gas-btn" data-target="ca-rgg" data-status="status-rgg">COPY $RGG</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <h1>Separate the <span class="mint">machine</span> from the <span class="cyan">fuel</span>.</h1>
-
-        <p class="hero-sub">
-          Single-token AI projects fail because they use their reserve asset as working capital. The Rig splits bare-metal cluster equity (<strong>$RIG</strong>) from high-velocity x402 agent execution gas (<strong>$RGG</strong>) at Block 0.
-        </p>
-
-        <!-- FR-04: Clean single-line #ca-rig and #ca-rgg DOM IDs for sub-30s CA hot-swap -->
-        <div class="ca-wrapper">
-          <div class="ca-unit">
-            <div class="ca-label">
-              <span>01 // $RIG — BARE-METAL HARDWARE INDEX</span>
-              <span class="ca-role-tag" id="status-rig">CAPITAL &amp; RESERVE LAYER</span>
+        <!-- FR-02: Twin-Genesis Specification Panel -->
+        <aside class="charter-card hero-entrance-delay" aria-label="Twin-Genesis Specification">
+          <div class="charter-visual">
+            <div class="core-emblem" aria-hidden="true">
+              <svg width="62" height="62" viewBox="0 0 120 120" fill="none">
+                <polygon points="60,12 102,36 60,60 18,36" fill="hsl(224 22% 14%)" stroke="hsl(220 25% 92% / 0.25)" stroke-width="2" />
+                <polygon points="18,36 60,60 60,108 18,84" fill="hsl(158 95% 48% / 0.14)" stroke="#06F19A" stroke-width="2" stroke-linejoin="round" />
+                <polygon points="60,60 102,36 102,84 60,108" fill="hsl(198 94% 60% / 0.14)" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round" />
+                <polygon points="60,38 79,49 60,60 41,49" fill="hsl(220 25% 97% / 0.12)" stroke="#F5F7FA" stroke-opacity="0.7" stroke-width="1.5" />
+                <circle cx="60" cy="60" r="3.8" fill="#F5F7FA" />
+                <circle cx="18" cy="36" r="3" fill="#06F19A" />
+                <circle cx="102" cy="36" r="3" fill="#38BDF8" />
+              </svg>
             </div>
-            <div class="ca-box">
-              <code class="ca-address" id="ca-rig">0xbfefd4d88899830d756b2678944770a792315ba3</code>
-              <div class="ca-actions">
-                <a id="scan-rig" href="https://basescan.org/token/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="mini-link">SCAN ↗</a>
-                <button type="button" class="copy-btn" data-target="ca-rig" data-status="status-rig">COPY $RIG</button>
+            <div class="core-meta">
+              <span class="core-kicker">DUAL-PRIMITIVE ARCHITECTURE</span>
+              <span class="core-heading">Twin-Contract Genesis Engine</span>
+              <div class="core-ratio-bar">
+                <span class="badge badge--primary">$RIG Reserve</span>
+                <div class="ratio-track" aria-hidden="true">
+                  <div class="ratio-rig"></div>
+                  <div class="ratio-rgg"></div>
+                </div>
+                <span class="badge badge--accent">$RGG Gas</span>
               </div>
             </div>
           </div>
 
-          <div class="ca-unit">
-            <div class="ca-label">
-              <span>02 // $RGG — AGENT EXECUTION GAS</span>
-              <span class="ca-role-tag gas" id="status-rgg">X402 THROUGHPUT LAYER</span>
-            </div>
-            <div class="ca-box gas-box">
-              <code class="ca-address" id="ca-rgg">0x36376c7058894685507eca5112d04cfb2547cba3</code>
-              <div class="ca-actions">
-                <a id="scan-rgg" href="https://basescan.org/token/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="mini-link">SCAN ↗</a>
-                <button type="button" class="copy-btn gas-btn" data-target="ca-rgg" data-status="status-rgg">COPY $RGG</button>
-              </div>
-            </div>
+          <div class="charter-header">
+            <span>GENESIS SPECIFICATION</span>
+            <span class="badge badge--neutral" id="spec-network-badge">BASE // L2</span>
+          </div>
+
+          <div class="charter-row">
+            <span class="charter-key">CONTROLLER STATE</span>
+            <span class="charter-val mint" id="spec-controller-state">CHECKING BASE RPC...</span>
+          </div>
+          <div class="charter-row">
+            <span class="charter-key">CAPITAL PRIMITIVE</span>
+            <span class="charter-val mint" id="spec-rig-short">$RIG (...5ba3)</span>
+          </div>
+          <div class="charter-row">
+            <span class="charter-key">VELOCITY PRIMITIVE</span>
+            <span class="charter-val cyan" id="spec-rgg-short">$RGG (...cba3)</span>
+          </div>
+          <div class="charter-row">
+            <span class="charter-key">SETTLEMENT RAIL</span>
+            <span class="charter-val">HTTP 402 / x402 v2</span>
+          </div>
+          <div class="charter-row">
+            <span class="charter-key">HUMAN INTERVENTION</span>
+            <span class="charter-val mint" id="spec-human-override">0.00% (AIR-GAPPED)</span>
+          </div>
+          <div class="charter-row">
+            <span class="charter-key">BASE BLOCK HEIGHT</span>
+            <span class="charter-val tabular" id="spec-block-height">—</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- On-Chain Telemetry Metrics Strip (100% live RPC / API derived) -->
+    <section class="metrics-section" aria-label="On-Chain Metrics">
+      <div class="container metrics-grid">
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">$RIG Vault / Supply</span>
+            <span class="metric-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="metric-value tabular" id="metric-vault-reserve">—</div>
+          <div class="metric-delta" id="metric-vault-sub">Reading Base L2 state...</div>
+        </div>
+
+        <div class="metric-card accent-top">
+          <div class="metric-head">
+            <span class="metric-label">$RGG Burned / Cycled</span>
+            <span class="metric-icon cyan" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+          </div>
+          <div class="metric-value tabular" id="metric-rgg-burned">—</div>
+          <div class="metric-delta cyan" id="metric-rgg-sub">Reading burn sink + x402...</div>
+        </div>
+
+        <div class="metric-card accent-top">
+          <div class="metric-head">
+            <span class="metric-label">x402 Settlements</span>
+            <span class="metric-icon cyan" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+          </div>
+          <div class="metric-value tabular" id="metric-settlements">—</div>
+          <div class="metric-delta cyan" id="metric-settlements-sub">Base L2 verified receipts</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Pool &amp; Contract Integrity</span>
+            <span class="metric-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+          </div>
+          <div class="metric-value tabular" id="metric-integrity">0% / 0%</div>
+          <div class="metric-delta muted" id="metric-integrity-sub">Verifying Doppler V4 / ERC-20...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FR-03: Live Dual-Primitive Telemetry Terminal -->
+    <section class="terminal-section" id="telemetry">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">Verified On-Chain &amp; x402 Stream</div>
+            <h2 class="section-title">Dual-Primitive Telemetry Terminal</h2>
+            <p class="section-sub">Real-time settlement receipts, contract supply checks, and Base block sync — streamed from the indexer with direct JSON-RPC verification.</p>
+          </div>
+          <div class="terminal-controls" role="group" aria-label="Telemetry Stream Controls">
+            <button type="button" class="term-btn active" data-filter="ALL">ALL FLOW</button>
+            <button type="button" class="term-btn" data-filter="RIG_VAULT">$RIG VAULT</button>
+            <button type="button" class="term-btn" data-filter="RGG_GAS">$RGG GAS</button>
+            <button type="button" class="term-btn" id="toggle-stream-btn">PAUSE</button>
+            <button type="button" class="term-btn" id="clear-stream-btn">CLEAR</button>
           </div>
         </div>
 
-        <div class="hero-cta-row">
-          <a id="cta-rig-chart" href="https://dexscreener.com/base/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener" class="btn btn-primary">Trade $RIG (Reserve) ↗</a>
-          <a id="cta-rgg-chart" href="https://dexscreener.com/base/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener" class="btn btn-cyan">Trade $RGG (Gas) ↗</a>
-          <a href="#telemetry" class="btn btn-secondary">Inspect Live Tape →</a>
-        </div>
-      </div>
-
-      <!-- FR-02: Twin-Genesis Specification Panel -->
-      <aside class="charter-card" aria-label="Twin-Genesis Specification">
-        <div class="charter-header">
-          <span>TWIN-GENESIS SPECIFICATION</span>
-          <span id="spec-network-badge">BASE // L2</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">CONTROLLER STATE</span>
-          <span class="charter-val mint" id="spec-controller-state">CHECKING BASE RPC...</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">CAPITAL PRIMITIVE</span>
-          <span class="charter-val mint" id="spec-rig-short">$RIG (...5ba3)</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">VELOCITY PRIMITIVE</span>
-          <span class="charter-val cyan" id="spec-rgg-short">$RGG (...cba3)</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">SETTLEMENT RAIL</span>
-          <span class="charter-val">HTTP 402 / x402 v2</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">HUMAN INTERVENTION</span>
-          <span class="charter-val mint" id="spec-human-override">0.00% (AIR-GAPPED)</span>
-        </div>
-        <div class="charter-row">
-          <span class="charter-key">BASE BLOCK HEIGHT</span>
-          <span class="charter-val" id="spec-block-height">—</span>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <!-- On-Chain Telemetry Metrics Strip (100% live RPC / API derived) -->
-  <section class="metrics-section">
-    <div class="container metrics-grid">
-      <div class="metric-card">
-        <div class="metric-label">$RIG Vault / Supply</div>
-        <div class="metric-value" id="metric-vault-reserve">—</div>
-        <div class="metric-delta" id="metric-vault-sub">Reading Base L2 state...</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">$RGG Burned / Cycled</div>
-        <div class="metric-value" id="metric-rgg-burned">—</div>
-        <div class="metric-delta cyan" id="metric-rgg-sub">Reading burn sink + x402...</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">x402 Settlements</div>
-        <div class="metric-value" id="metric-settlements">—</div>
-        <div class="metric-delta" id="metric-settlements-sub">Base L2 verified receipts</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Pool &amp; Contract Integrity</div>
-        <div class="metric-value" id="metric-integrity">0% / 0%</div>
-        <div class="metric-delta muted" id="metric-integrity-sub">Verifying Doppler V4 / ERC-20...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FR-03: Live Dual-Primitive Telemetry Terminal -->
-  <section class="terminal-section" id="telemetry">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">Verified On-Chain &amp; x402 Stream</div>
-          <h2 class="section-title">Dual-Primitive Telemetry Terminal</h2>
-        </div>
-        <div class="terminal-controls">
-          <button type="button" class="term-btn active" data-filter="ALL">ALL FLOW</button>
-          <button type="button" class="term-btn" data-filter="RIG_VAULT">$RIG VAULT</button>
-          <button type="button" class="term-btn" data-filter="RGG_GAS">$RGG GAS</button>
-          <button type="button" class="term-btn" id="toggle-stream-btn">PAUSE</button>
-          <button type="button" class="term-btn" id="clear-stream-btn">CLEAR</button>
-        </div>
-      </div>
-
-      <div class="terminal-window">
-        <div class="terminal-bar">
-          <div class="terminal-dots">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <div class="terminal-dots" aria-hidden="true">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div class="terminal-title" id="terminal-source-label">rig-indexer@base-l2: ~/telemetry/x402-receipts.log</div>
+            <div class="terminal-title" id="stream-indicator" style="color: hsl(var(--primary));">● CONNECTING</div>
           </div>
-          <div class="terminal-title" id="terminal-source-label">rig-indexer@base-l2: ~/telemetry/x402-receipts.log</div>
-          <div class="terminal-title" id="stream-indicator" style="color: var(--accent-mint);">● CONNECTING</div>
+          <div class="terminal-body" id="terminal-feed" role="log" aria-live="polite"></div>
         </div>
-        <div class="terminal-body" id="terminal-feed" role="log" aria-live="polite"></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="pillars-section" id="flywheel">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">System Architecture</div>
-          <h2 class="section-title">One Controller. Two Primitives.</h2>
+    <section class="pillars-section" id="flywheel">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">System Architecture</div>
+            <h2 class="section-title">One Controller. Two Primitives.</h2>
+            <p class="section-sub">Execution fuel cycles rapidly through HTTP 402 tool calls while net spread sweeps into the immutable reserve vault.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="pillars-grid">
-        <div class="pillar-card">
-          <div class="pillar-index" id="pillar-rig-label">01 // $RIG (0xbfef...5ba3)</div>
-          <h3>Low-Velocity Capital Layer</h3>
-          <p>Anchors the bare-metal cluster and reserve vault. Protected from high-frequency agent slippage so reserve backing compounds cleanly.</p>
+        <div class="flow-banner" aria-label="x402 Closed-Loop Flow">
+          <div class="flow-node">
+            <div class="flow-step">01 // HTTP 402 Challenge</div>
+            <h4>Agent Signs Permit</h4>
+            <p>Autonomous runtime signs an off-chain EIP-2612 / EIP-3009 authorization in <code>$RGG</code> via <code>PAYMENT-SIGNATURE</code>.</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <div class="flow-node">
+            <div class="flow-step">02 // Deterministic Split</div>
+            <h4>Router Burns &amp; Recycles</h4>
+            <p><code>RigX402Router</code> atomically executes burn sink routing, cycle rewards, and reserve accounting with zero human custody.</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <div class="flow-node">
+            <div class="flow-step mint">03 // Compounded Reserve</div>
+            <h4>$RIG Vault Accrual</h4>
+            <p>Net spreads sweep directly into <code>RigReserveVault</code>, anchoring bare-metal cluster capacity to <code>$RIG</code>.</p>
+          </div>
         </div>
-        <div class="pillar-card">
-          <div class="pillar-index cyan" id="pillar-rgg-label">02 // $RGG (0x3637...cba3)</div>
-          <h3>High-Velocity Throughput</h3>
-          <p>Settles machine-to-machine HTTP 402 (x402 v2) payment challenges, EIP-2612 permits, and sub-second inference metering at zero reserve drag.</p>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-index">03 // CLOSED-LOOP SWEEP</div>
-          <h3>Deterministic Value Routing</h3>
-          <p>Agents burn and recycle $RGG on every inference call while net protocol spreads sweep into the non-custodial $RIG reserve vault.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="manifesto-section" id="thesis">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">Operational Thesis</div>
-          <h2 class="section-title">That Division Never Changes</h2>
+        <div class="pillars-grid">
+          <div class="pillar-card">
+            <div class="pillar-index" id="pillar-rig-label">01 // $RIG (0xbfef...5ba3)</div>
+            <h3>Low-Velocity Capital Layer</h3>
+            <p>Anchors the bare-metal cluster and reserve vault. Protected from high-frequency agent slippage so reserve backing compounds cleanly.</p>
+          </div>
+          <div class="pillar-card">
+            <div class="pillar-index cyan" id="pillar-rgg-label">02 // $RGG (0x3637...cba3)</div>
+            <h3>High-Velocity Throughput</h3>
+            <p>Settles machine-to-machine HTTP 402 (x402 v2) payment challenges, EIP-2612 permits, and sub-second inference metering at zero reserve drag.</p>
+          </div>
+          <div class="pillar-card">
+            <div class="pillar-index">03 // CLOSED-LOOP SWEEP</div>
+            <h3>Deterministic Value Routing</h3>
+            <p>Agents burn and recycle $RGG on every inference call while net protocol spreads sweep into the non-custodial $RIG reserve vault.</p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="manifesto-box">
-        <p>
-          Single-token AI projects fail on accounting. Forcing one asset to act as both long-term treasury reserve and high-frequency working capital bleeds holders when agents sell for compute and prices agents out when holders lock supply.
-        </p>
-        <p>
-          The Rig separates the machine from the fuel at Block 0. Both ba3 contracts on Base work as one canonical system: $RGG handles execution velocity and x402 settlement; $RIG holds reserve weight. Every receipt is verifiable on BaseScan.
-        </p>
+    <section class="manifesto-section" id="thesis">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">Operational Thesis</div>
+            <h2 class="section-title">That Division Never Changes</h2>
+          </div>
+        </div>
+
+        <div class="manifesto-box">
+          <div class="manifesto-lead">
+            Never use long-term hardware reserve equity as high-frequency agent working capital.
+          </div>
+          <div class="manifesto-copy">
+            <p>
+              Single-token AI projects fail on accounting. Forcing one asset to act as both long-term treasury reserve and high-frequency working capital bleeds holders when agents sell for compute and prices agents out when holders lock supply.
+            </p>
+            <p>
+              The Rig separates the machine from the fuel at Block 0. Both ba3 contracts on Base work as one canonical system: $RGG handles execution velocity and x402 settlement; $RIG holds reserve weight. Every receipt is verifiable on BaseScan.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <footer>
     <div class="container footer-inner">
-      <div>THE RIG ($RIG + $RGG) // CANONICAL TWIN-GENESIS // DEPLOYED ON BASE</div>
+      <div class="footer-brand">
+        <span>THE RIG ($RIG + $RGG) // CANONICAL TWIN-GENESIS // DEPLOYED ON BASE</span>
+      </div>
       <div class="footer-links">
         <a id="footer-rig-scan" href="https://basescan.org/token/0xbfefd4d88899830d756b2678944770a792315ba3" target="_blank" rel="noopener">$RIG BASESCAN</a>
         <a id="footer-rgg-scan" href="https://basescan.org/token/0x36376c7058894685507eca5112d04cfb2547cba3" target="_blank" rel="noopener">$RGG BASESCAN</a>
@@ -944,7 +1725,7 @@
 
     // FR-01: Dual-Contract Copy Handler with navigator.clipboard + DOM selection fallback
     document.querySelectorAll('.copy-btn[data-target]').forEach((btn) => {
-      const originalLabel = btn.textContent;
+      const originalHtml = btn.innerHTML;
       btn.addEventListener('click', async () => {
         const targetId = btn.getAttribute('data-target');
         const statusId = btn.getAttribute('data-status');
@@ -970,7 +1751,7 @@
         statusEl.textContent = 'COPIED TO CLIPBOARD';
 
         setTimeout(() => {
-          btn.textContent = originalLabel;
+          btn.innerHTML = originalHtml;
           btn.classList.remove('copied');
           statusEl.textContent = originalStatus;
         }, 2000);
@@ -1019,7 +1800,7 @@
         : escapeHtml(shortTx);
 
       line.innerHTML = `
-        <span class="log-time">${escapeHtml(formatClock(ev.timestamp))}</span>
+        <span class="log-time tabular">${escapeHtml(formatClock(ev.timestamp))}</span>
         <span class="log-agent">[${escapeHtml(ev.agentId || 'NODE-01')}]</span>
         <span class="log-token ${badgeClass}">${badgeLabel}</span>
         <span class="log-msg">${escapeHtml(ev.summary)}</span>
@@ -1072,7 +1853,6 @@
       const rigMarket = snap.market?.rig;
       const rggMarket = snap.market?.rgg;
 
-      // Metric 1: Vault Reserve (or $RIG Fixed Supply + Pool Liquidity before Vault binding)
       if (snap.contracts?.vault) {
         const usdc = Number(m.vaultUsdcReserve || 0);
         const eth = Number(m.vaultEthReserve || 0);
@@ -1090,14 +1870,12 @@
         document.getElementById('metric-vault-sub').textContent = 'Fixed genesis supply · Vault pending bind';
       }
 
-      // Metric 2: $RGG Burned / Cycled
       document.getElementById('metric-rgg-burned').textContent = `${formatCompactSupply(m.rggTotalBurned)} $RGG`;
       document.getElementById('metric-rgg-sub').textContent =
         Number(m.totalRggSettled || 0) > 0
           ? `${formatCompactSupply(m.totalRggSettled)} cycled via x402`
           : `Supply ${formatCompactSupply(m.rggTotalSupply)} $RGG`;
 
-      // Metric 3: x402 Settlements + Market Txns
       const settlements = Number(m.totalSettlements || 0);
       const marketTxns = (rigMarket?.txns24h || 0) + (rggMarket?.txns24h || 0);
       document.getElementById('metric-settlements').textContent =
@@ -1105,7 +1883,6 @@
       document.getElementById('metric-settlements-sub').textContent =
         snap.blockNumber ? `${snap.networkLabel} · Block #${snap.blockNumber.toLocaleString('en-US')}` : 'Awaiting settlement receipts';
 
-      // Metric 4: Integrity
       document.getElementById('metric-integrity').textContent = '0% / 0%';
       document.getElementById('metric-integrity-sub').textContent =
         sealed ? 'RigController sealed · Zero override' : 'Twin ...ba3 ERC-20s verified on Base';
@@ -1131,7 +1908,7 @@
 
       if (!isPaused) {
         if (snap.status === 'live') {
-          setIndicator(`● LIVE · ${snap.networkLabel}`, '#00F59B');
+          setIndicator(`● LIVE · ${snap.networkLabel}`, '#06F19A');
         } else if (snap.status === 'rpc_error') {
           setIndicator('▲ RPC BACKOFF', '#F59E0B');
         } else {
@@ -1308,7 +2085,6 @@
       setInterval(pollDirectBaseRpc, 10000);
     }
 
-    // Filter Controls
     filterBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         filterBtns.forEach((b) => b.classList.remove('active'));
@@ -1321,7 +2097,7 @@
     toggleStreamBtn.addEventListener('click', () => {
       isPaused = !isPaused;
       toggleStreamBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
-      setIndicator(isPaused ? '❚❚ PAUSED' : '● LIVE', isPaused ? '#94A3B8' : '#00F59B');
+      setIndicator(isPaused ? '❚❚ PAUSED' : '● LIVE', isPaused ? '#909BAD' : '#06F19A');
     });
 
     clearStreamBtn.addEventListener('click', () => {

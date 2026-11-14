@@ -42,7 +42,7 @@ npm run build && npm start
 Then open `http://127.0.0.1:8787/` — the backend serves `index.html` alongside `/api/telemetry/snapshot`, `/api/telemetry/stream`, `/v1/x402/terms`, and `POST /v1/agent/execute`.
 
 ### 4. Sub-30-Second CA Hot-Swap (`index.html`)
-Edit `#ca-rig` and `#ca-rgg` in `index.html` (lines 706 and 720) or pass `?api=https://api.therig.co` / edit `RIG_CONFIG` at the top of `<script>`. All BaseScan, DexScreener, short hashes, and RPC queries derive dynamically from those single-line DOM IDs.
+Edit `#ca-rig` and `#ca-rgg` in `index.html` (lines 1409 and 1423) or pass `?api=https://api.therig.co` / edit `RIG_CONFIG` at the top of `<script>`. All BaseScan, DexScreener, short hashes, and RPC queries derive dynamically from those single-line DOM IDs.
 
 ### 5. Local Hosting + Cloudflare Pages & Existing Tunnel
 See [`deploy/HOSTING.md`](deploy/HOSTING.md) for wiring your local `127.0.0.1:8787` backend (`docker compose up -d --build`) to Cloudflare:
